@@ -11,7 +11,8 @@
   };
 
   imports = [
-  ../../modules/home-manager/development.nix
+    ../../modules/home-manager/development.nix
+    ../../modules/home-manager/1password-git.nix
   ];
 
     home.file.".face" = {
