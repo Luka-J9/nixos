@@ -4,17 +4,50 @@
   pkgs,
   ...
 }:
+
+let
+  cfg = config._1password-git;
+  isKeySet = lib.hasAttr "key" cfg.signing && cfg.signing.key != "";
+in
 {
+
+  options = {
+    _1password-git = {
+      enable = lib.mkEnableOption "enable git with 1password settings";
+
+      agent-conf = lib.mkOption {
+        type = lib.types.path;
+        description = "the path to the `agent.toml` configuration see `https://developer.1password.com/docs/ssh/agent/config/`";
+      };
+
+      email = lib.mkOption {
+        type = lib.types.str;
+        description = "The email used for git configuration. See `https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup`";
+      };
+
+      name = lib.mkOption {
+        type = lib.types.str;
+        description = "The name used for git configuration. See `https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup`";
+      };
+
+      signing.key = lib.mkOption {
+        type = lib.types.str;
+        description = "The public key of what was used to sign the commit";
+      };
+
+    };
+  };
+
+  config = {
 
     home.packages = with pkgs; [
       _1password-gui
       _1password
     ];
 
-    config = {
     home.file = {
       ".config/1Password/ssh/agent.toml" = {
-        source = ../../dotfiles/1password/agent.toml;
+        source = cfg.agent-conf;
       };
     };
 
@@ -44,12 +77,12 @@
         };
 
         user = {
-          email = "Luka-J9@users.noreply.github.com";
-          name = "Luka Jurukovski";
-          signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID2WORLWmi4hPbsANjBpP1a9oTHxgG4CeKvwOGwKy+h0";
+          email = cfg.email;
+          name = cfg.email;
+          signingKey = if isKeySet then cfg.signing.key else null;
         };
       };
     };
-    };
+  };
 
 }

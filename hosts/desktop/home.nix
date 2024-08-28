@@ -15,10 +15,17 @@
     ../../modules/home-manager/1password-git.nix
   ];
 
-    home.file.".face" = {
+  home.file.".face" = {
     source = ../icons/profile.png;
-    };
+  };
 
+  _1password-git = {
+    enable = true;
+    agent-conf = ../../dotfiles/1password/agent.toml;
+    name = "Luka Jurukovski";
+    email = "Luka-J9@users.noreply.github.com";
+    signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID2WORLWmi4hPbsANjBpP1a9oTHxgG4CeKvwOGwKy+h0";
+  };
 
   # The following was determined by executing `dconf watch /` and manually encoding what was found
   dconf.settings = {

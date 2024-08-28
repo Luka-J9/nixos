@@ -43,7 +43,7 @@ in
       // lib.mkIf (!quiet-boot.enable) {
         # Boot Loader settings when quiet is disabled
         loader = {
-         #  grub.enable = true;
+          #  grub.enable = true;
           efi.canTouchEfiVariables = true;
           systemd-boot.enable = true;
           # Other loader settings can be added here if needed

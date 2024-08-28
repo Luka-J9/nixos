@@ -28,7 +28,7 @@
 
   age = {
     secrets = {
-      hashed-profile-password.file =  ../../secrets/hashed-profile-password.age;
+      hashed-profile-password.file = ../../secrets/hashed-profile-password.age;
     };
     identityPaths = [ "/root/.ssh/id_ed25519" ];
   };
