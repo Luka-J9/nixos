@@ -26,6 +26,8 @@
       extraConfig = {
         init.defaultBranch = "main";
         safe.directory = "/etc/nixos";
+        branch.autoSetupRebase = "always";
+        push.autoSetupRemote = true;
         gpg = {
           format = "ssh";
         };
