@@ -1,0 +1,12 @@
+# This file contains all the ssh keys to use.
+# See https://developer.1password.com/docs/ssh/agent/config/
+# For this to work go to settings -> developer -> enable ssh agent
+
+[[ssh-keys]]
+item = "Git Authentication Key"
+vault = "Development"
+
+# Add my Git signing key from my Work vault
+[[ssh-keys]]
+item = "Git Signing Key"
+vault = "Development"
