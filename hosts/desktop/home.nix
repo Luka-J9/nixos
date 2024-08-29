@@ -13,6 +13,7 @@
   imports = [
     ../../modules/home-manager/development.nix
     ../../modules/home-manager/1password-git.nix
+    ../../modules/home-manager/3dPrinting.nix
   ];
 
   home.file.".face" = {
@@ -37,7 +38,7 @@
         "steam.desktop"
         "signal-desktop.desktop"
         "1password.desktop"
-        "kitty.desktop"
+        "PrusaSlicer.desktop"
       ];
       enabled-extensions = [
         "dash-to-dock@micxgx.gmail.com"

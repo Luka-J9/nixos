@@ -13,7 +13,6 @@
     # Include the results of the hardware scan.
     inputs.home-manager.nixosModules.default
     ./hardware-configuration.nix
-    ../../modules/nixos/cosmic.nix
     ../../modules/nixos/nvidia.nix
     ../../modules/nixos/pipewire.nix
     ../../modules/nixos/gnome.nix
@@ -100,11 +99,10 @@
       vesktop
       ungoogled-chromium
       kitty
+      prusa-slicer
       ollama
     ];
   };
-
-  services.desktopManager.cosmic.enable = true;
 
   profile = {
     enable = true;
