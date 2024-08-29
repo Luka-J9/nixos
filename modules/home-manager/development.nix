@@ -30,6 +30,8 @@
 
       gleam
 
+      jq
+
     ];
     programs.vscode = {
       enable = true;
