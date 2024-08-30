@@ -35,6 +35,19 @@ in
         description = "The public key of what was used to sign the commit";
       };
 
+      autostart = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          description = "Enable autostarting 1password";
+          default = false;
+        };
+        background = lib.mkOption {
+          type = lib.types.bool;
+          description = "Set 1password to autostart in the background";
+          default = false;
+        };
+      };
+
     };
   };
 
@@ -48,6 +61,21 @@ in
     home.file = {
       ".config/1Password/ssh/agent.toml" = {
         source = cfg.agent-conf;
+      };
+
+      ".config/autostart/${pkgs._1password-gui.pname}.desktop" = lib.mkIf cfg.autostart.enable {
+        text = ''
+          [Desktop Entry]
+          Name=1Password
+          Exec=1password %U ${if cfg.autostart.background then "--silent" else ""}
+          Terminal=false
+          Type=Application
+          Icon=1password
+          StartupWMClass=1Password
+          Comment=Password manager and secure wallet
+          MimeType=x-scheme-handler/onepassword;
+          Categories=Office;
+        '';
       };
     };
 

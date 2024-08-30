@@ -1,25 +1,29 @@
 { config, pkgs, ... }:
 
-
-let 
-  autostartPrograms = [ pkgs.vesktop pkgs.signal-desktop pkgs._1password-gui];
-  autoStartConfigs = builtins.listToAttrs (map
-      (pkg:
-        {
-          name = ".config/autostart/" + pkg.pname + ".desktop";
-          value =
-            if pkg ? desktopItem then {
-              # Application has a desktopItem entry. 
-              # Assume that it was made with makeDesktopEntry, which exposes a
-              # text attribute with the contents of the .desktop file
-              text = pkg.desktopItem.text;
-            } else {
-              # Application does *not* have a desktopItem entry. Try to find a
-              # matching .desktop name in /share/apaplications
-              source = (pkg + "/share/applications/" + pkg.pname + ".desktop");
-            };
-        })
-      autostartPrograms);
+let
+  autostartPrograms = [
+    pkgs.vesktop
+    #pkgs.signal-desktop 
+  ];
+  autoStartConfigs = builtins.listToAttrs (
+    map (pkg: {
+      name = ".config/autostart/" + pkg.pname + ".desktop";
+      value =
+        if pkg ? desktopItem then
+          {
+            # Application has a desktopItem entry. 
+            # Assume that it was made with makeDesktopEntry, which exposes a
+            # text attribute with the contents of the .desktop file
+            text = pkg.desktopItem.text;
+          }
+        else
+          {
+            # Application does *not* have a desktopItem entry. Try to find a
+            # matching .desktop name in /share/apaplications
+            source = (pkg + "/share/applications/" + pkg.pname + ".desktop");
+          };
+    }) autostartPrograms
+  );
 
 in
 {
@@ -39,14 +43,13 @@ in
   ];
 
   home.packages = with pkgs; [
-      signal-desktop
-      zed-editor
-      _1password-gui
-      vesktop
-      # ungoogled-chromium
-      kitty
-      prusa-slicer
-      ollama
+    signal-desktop
+    zed-editor
+    _1password-gui
+    vesktop
+    kitty
+    prusa-slicer
+    ollama
 
     cantarell-fonts
     hack-font
@@ -87,6 +90,10 @@ in
     name = "Luka Jurukovski";
     email = "Luka-J9@users.noreply.github.com";
     signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID2WORLWmi4hPbsANjBpP1a9oTHxgG4CeKvwOGwKy+h0";
+    autostart = {
+      enable = true;
+      background = true;
+    };
   };
 
   # The following was determined by executing `dconf watch /` and manually encoding what was found
@@ -159,9 +166,40 @@ in
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
-  home.file =  autoStartConfigs // {".face" = {
-    source = ../icons/profile.png;
-  };
+  home.file = autoStartConfigs // {
+    ".face" = {
+      source = ../icons/profile.png;
+    };
+
+    ".config/autostart/${pkgs.signal-desktop.pname}.desktop" = {
+      text = ''
+        [Desktop Entry]
+        Name=Signal
+        Exec=${pkgs.signal-desktop.outPath}/bin/signal-desktop --no-sandbox --start-in-tray %U
+        Terminal=false
+        Type=Application
+        Icon=signal-desktop
+        StartupWMClass=signal
+        Comment=Private messaging from your desktop
+        MimeType=x-scheme-handler/sgnl;x-scheme-handler/signalcaptcha;
+        Categories=Network;InstantMessaging;Chat;    
+      '';
+    };
+
+    ".config/autostart/${pkgs.vesktop.pname}.desktop" = {
+      text = ''
+        [Desktop Entry]
+        Categories=Network;InstantMessaging;Chat
+        Exec=vesktop --start-minimized %U
+        GenericName=Internet Messenger
+        Icon=vesktop
+        Keywords=discord;vencord;electron;chat
+        Name=Vesktop
+        StartupWMClass=Vesktop
+        Type=Application
+      '';
+    };
+
   };
 
   # Home Manager can also manage your environment variables through
@@ -193,8 +231,8 @@ in
       enable = true;
       package = pkgs.chromium;
       extensions = [
-        {id = "aeblfdkhhhdcdjpifhhbdiojplfjncoa";} #1Password
-        {id = "cjpalhdlnbpafiamejdnhcphjbkeiagm";} #Ublock Orign
+        { id = "aeblfdkhhhdcdjpifhhbdiojplfjncoa"; } # 1Password
+        { id = "cjpalhdlnbpafiamejdnhcphjbkeiagm"; } # Ublock Orign
       ];
     };
   };
