@@ -193,8 +193,8 @@ in
       enable = true;
       package = pkgs.chromium;
       extensions = [
-        {id = "aeblfdkhhhdcdjpifhhbdiojplfjncoa";}
-        {id = "cjpalhdlnbpafiamejdnhcphjbkeiagm";}
+        {id = "aeblfdkhhhdcdjpifhhbdiojplfjncoa";} #1Password
+        {id = "cjpalhdlnbpafiamejdnhcphjbkeiagm";} #Ublock Orign
       ];
     };
   };
