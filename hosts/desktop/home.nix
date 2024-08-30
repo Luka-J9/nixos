@@ -38,13 +38,12 @@ in
     ../../modules/home-manager/3dPrinting.nix
   ];
 
-
   home.packages = with pkgs; [
       signal-desktop
       zed-editor
       _1password-gui
       vesktop
-      ungoogled-chromium
+      # ungoogled-chromium
       kitty
       prusa-slicer
       ollama
@@ -113,6 +112,7 @@ in
         "just-perfection-desktop@just-perfection"
         "pop-shell@system76.com"
         "windowIsReady_Remover@nunofarruca@gmail.com"
+        "appindicatorsupport@rgcjonas.gmail.com"
       ];
     };
     "org/gnome/desktop/interface" = {
@@ -185,6 +185,18 @@ in
   };
 
   # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
+
+  programs = {
+    home-manager.enable = true;
+
+    chromium = {
+      enable = true;
+      package = pkgs.chromium;
+      extensions = [
+        {id = "aeblfdkhhhdcdjpifhhbdiojplfjncoa";}
+        {id = "cjpalhdlnbpafiamejdnhcphjbkeiagm";}
+      ];
+    };
+  };
 
 }

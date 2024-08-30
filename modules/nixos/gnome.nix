@@ -60,5 +60,6 @@
     gnomeExtensions.unblank
     gnomeExtensions.user-themes
     gnomeExtensions.window-is-ready-remover
+    gnomeExtensions.appindicator
   ];
 }
