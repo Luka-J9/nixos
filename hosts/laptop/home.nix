@@ -75,10 +75,8 @@
         "chromium-browser.desktop"
         "code.desktop"
         "vesktop.desktop"
-        "steam.desktop"
         "signal-desktop.desktop"
         "1password.desktop"
-        "PrusaSlicer.desktop"
       ];
       enabled-extensions = [
         "dash-to-dock@micxgx.gmail.com"
