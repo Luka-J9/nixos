@@ -92,16 +92,7 @@
     userName = "lukaj";
     description = "Luka Jurukovski";
     hashedPasswordFile = "/temp.txt";
-    packages = with pkgs; [
-      signal-desktop
-      zed-editor
-      _1password-gui
-      vesktop
-      ungoogled-chromium
-      kitty
-      prusa-slicer
-      ollama
-    ];
+    packages = with pkgs; [ ];
   };
 
   profile = {
@@ -131,11 +122,7 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    _1password
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
-  ];
+  environment.systemPackages = with pkgs; [ ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
