@@ -33,7 +33,7 @@
             { environment.systemPackages = [ agenix.packages.x86_64-linux.default ]; }
           ];
         };
-	laptop = nixpkgs.lib.nixosSystem {
+        laptop = nixpkgs.lib.nixosSystem {
           specialArgs = {
             inherit inputs;
           };

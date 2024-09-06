@@ -59,5 +59,35 @@
         }
       '';
     };
+
+    xdg.desktopEntries = {
+      code = {
+        name = "Visual Studio Code";
+        exec = "code --reuse-window %F";
+        icon = "vscode";
+        categories = [
+          "Utility"
+          "TextEditor"
+          "Development"
+          "IDE"
+        ];
+        comment = "Code Editing. Redefined";
+        genericName = "Text Editor";
+        startupNotify = true;
+        type = "Application";
+        actions = {
+          "new-empty-window" = {
+            exec = "code --new-window %F";
+            icon = "vscode";
+            name = "New Empty Window";
+          };
+          "nix-os-env" = {
+            exec = "code --new-window /etc/nixos";
+            icon = "vscode";
+            name = "Open Nix Configuration";
+          };
+        };
+      };
+    };
   };
 }
