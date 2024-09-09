@@ -53,11 +53,15 @@
         baccata.scaladex-search
         gleam.gleam
       ];
-      userSettings = lib.literalExpression ''
-        {
-        "files.autoSave" = "off";
-        }
-      '';
+      userSettings =
+          {
+            "files.autoSave" = "off";
+            "files.watcherExclude" = {
+              "**/.bloop" = true;
+              "**/.metals" = true;
+              "**/.ammonite" = true;
+            };
+          };
     };
 
     xdg.desktopEntries = {

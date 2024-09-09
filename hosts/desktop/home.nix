@@ -20,6 +20,7 @@
 
   home.packages = with pkgs; [
     ollama
+    unifi
 
     # Fonts
     fira
