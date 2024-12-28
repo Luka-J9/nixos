@@ -55,7 +55,7 @@ in
 
     home.packages = with pkgs; [
       _1password-gui
-      _1password
+      _1password-cli
     ];
 
     home.file = {

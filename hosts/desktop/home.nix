@@ -16,6 +16,7 @@
     ../../modules/home-manager/3dPrinting.nix
     ../../modules/home-manager/vesktop.nix
     ../../modules/home-manager/signal.nix
+    ../../modules/home-manager/zed.nix
   ];
 
   home.packages = with pkgs; [
@@ -31,13 +32,13 @@
     monaspace
     noto-fonts
     ubuntu_font_family
-    (nerdfonts.override {
-      fonts = [
-        "FiraCode"
-        "DroidSansMono"
-        "JetBrainsMono"
-      ];
-    })
+    # (nerdfonts.override {
+    #   fonts = [
+    #     "FiraCode"
+    #     "DroidSansMono"
+    #     "JetBrainsMono"
+    #   ];
+    # })
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello

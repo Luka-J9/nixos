@@ -19,6 +19,7 @@
       sbt
       mill
       graalvm-ce
+      metals
 
       rustc
       rustup

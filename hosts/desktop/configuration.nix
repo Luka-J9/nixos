@@ -94,7 +94,6 @@
     hashedPasswordFile = config.age.secrets.hashed-profile-password.path;
     packages = with pkgs; [
       signal-desktop
-      zed-editor
       _1password-gui
       vesktop
       ungoogled-chromium

@@ -13,6 +13,7 @@
   # Excluding some GNOME applications from the default install
   environment.gnome.excludePackages =
     (with pkgs; [
+      atomix 
       gedit
       gnome-connections
       gnome-console
@@ -31,9 +32,7 @@
       gnome-system-monitor
       simple-scan
       yelp
-    ])
-    ++ (with pkgs.gnome; [
-      atomix
+
       gnome-characters
       gnome-clocks
       gnome-contacts
@@ -44,7 +43,7 @@
       hitori # sudoku game
       iagno # go game
       tali # poker game
-    ]);
+    ]);    
 
   # List of Gnome specific packages
   environment.systemPackages = with pkgs; [
