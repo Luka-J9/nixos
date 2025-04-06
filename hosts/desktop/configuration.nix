@@ -25,6 +25,9 @@
 
   ];
 
+  system.autoUpgrade.enable = true;
+  system.autoUpgrade.allowReboot = true;
+
   age = {
     secrets = {
       hashed-profile-password.file = ../../secrets/hashed-profile-password.age;

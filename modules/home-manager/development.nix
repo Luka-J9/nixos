@@ -9,8 +9,12 @@
 
     home.packages = with pkgs; [
 
+      nixd
+
       cosmic-term
       bazel
+
+      bash
 
       scala
       scalafmt
@@ -20,6 +24,7 @@
       mill
       graalvm-ce
       metals
+      bloop
 
       rustc
       rustup
