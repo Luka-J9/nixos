@@ -10,8 +10,5 @@
   };
   programs.gamemode.enable = true;
 
-  environment.sessionVariables = {
-    STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/user/.steam/root/compatibilitytools.d";
-    # TODO: Homemanager: https://www.youtube.com/watch?v=qlfm3MEbqYA
-  };
+  # TODO:https://www.youtube.com/watch?v=qlfm3MEbqYA
 }

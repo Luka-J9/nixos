@@ -8,26 +8,18 @@
   config = {
 
     home.packages = with pkgs; [
-
+      git
       nixd
-
-      cosmic-term
-      bazel
-
-      bash
-
+      kitty
       scala
       scalafmt
       scalafix
       scala-cli
       sbt
       mill
-      graalvm-ce
+      graalvmPackages.graalvm-ce
       metals
       bloop
-
-      rustc
-      rustup
 
       direnv
       devenv
@@ -37,11 +29,10 @@
       gleam
 
       jq
-
     ];
     programs.vscode = {
       enable = true;
-      extensions = with pkgs.vscode-extensions; [
+      profiles.default.extensions = with pkgs.vscode-extensions; [
         bazelbuild.vscode-bazel
         vadimcn.vscode-lldb
         fill-labs.dependi
@@ -59,7 +50,7 @@
         baccata.scaladex-search
         gleam.gleam
       ];
-      userSettings =
+      profiles.default.userSettings =
           {
             "files.autoSave" = "off";
             "files.watcherExclude" = {
@@ -67,6 +58,7 @@
               "**/.metals" = true;
               "**/.ammonite" = true;
             };
+            "github.copilot.nextEditSuggestions.enabled"= true;
           };
     };
 
@@ -92,7 +84,7 @@
             name = "New Empty Window";
           };
           "nix-os-env" = {
-            exec = "code --new-window /etc/nixos";
+            exec = "code --new-window /home/nix";
             icon = "vscode";
             name = "Open Nix Configuration";
           };
