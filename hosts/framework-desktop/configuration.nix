@@ -31,7 +31,7 @@ in
       isNormalUser = true;
       description = "Luka";
       home = "/home/${mainUser}";
-      # hashed-profile-password = config.age.secrets.hashed-profile-password.path;
+      hashedPasswordFile = config.age.secrets.hashed-profile-password.path;
       extraGroups = [
         "wheel"
         "networkmanager"
@@ -39,12 +39,12 @@ in
     };
   };
 
-  # age = {
-  #   secrets = {
-  #     hashed-profile-password.file = ./secrets/hashed-profile-password.age;
-  #   };
-  #   identityPaths = [ "/root/.ssh/id_ed25519" ];
-  # };
+  age = {
+    secrets = {
+      hashed-profile-password.file = ./secrets/hashed-profile-password.age;
+    };
+    identityPaths = [ "/root/.ssh/id_ed25519" ];
+  };
 
   home-manager = {
     extraSpecialArgs = {
