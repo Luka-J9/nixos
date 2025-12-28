@@ -7,10 +7,14 @@
 
 let
   defaults = {
-    autostart = { enable = true; background = true; };
+    autostart = {
+      enable = true;
+      background = true;
+    };
   };
 
-  cfg = defaults // (if config ? programs && config.programs ? signal then config.programs.signal else {});
+  cfg =
+    defaults // (if config ? programs && config.programs ? signal then config.programs.signal else { });
 in
 
 {

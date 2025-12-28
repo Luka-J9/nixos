@@ -14,9 +14,9 @@
     ];
 
     home.file = {
-        ".config/1Password/ssh/agent.toml" = {
-          source = ./agent.toml;
-        };
+      ".config/1Password/ssh/agent.toml" = {
+        source = ./agent.toml;
+      };
 
       ".config/autostart/${pkgs._1password-gui.pname}.desktop" = {
         text = ''

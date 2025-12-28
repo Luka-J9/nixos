@@ -2,7 +2,13 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 let
   sources = import ./lon.nix;
@@ -10,15 +16,15 @@ let
   mainUser = "luka";
 in
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      inputs.home-manager.nixosModules.default
-      
-      lanzaboote.nixosModules.lanzaboote
-      ./hardware-configuration.nix
-      ../../modules/steam/steam.nix
-      ../../modules/gnome/gnome.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    inputs.home-manager.nixosModules.default
+
+    lanzaboote.nixosModules.lanzaboote
+    ./hardware-configuration.nix
+    ../../modules/steam/steam.nix
+    ../../modules/gnome/gnome.nix
+  ];
 
   users.users = {
     "${mainUser}" = {
@@ -26,7 +32,10 @@ in
       description = "Luka";
       home = "/home/${mainUser}";
       # hashed-profile-password = config.age.secrets.hashed-profile-password.path;
-      extraGroups = [ "wheel" "networkmanager" ];
+      extraGroups = [
+        "wheel"
+        "networkmanager"
+      ];
     };
   };
 
@@ -37,7 +46,6 @@ in
   #   identityPaths = [ "/root/.ssh/id_ed25519" ];
   # };
 
-  
   home-manager = {
     extraSpecialArgs = {
       inherit inputs;
@@ -50,17 +58,17 @@ in
   # Bootloader.
   boot.loader.systemd-boot.enable = lib.mkForce false;
   boot.loader.efi.canTouchEfiVariables = true;
-  
+
   boot.lanzaboote = {
     enable = true;
-    pkiBundle = "/var/lib/sbctl"; 
+    pkiBundle = "/var/lib/sbctl";
   };
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   networking.hostName = "framework-desktop"; # Define your hostname.
-  networking.networkmanager.wifi.backend = "iwd"; #TPM support somehow breaks this
+  networking.networkmanager.wifi.backend = "iwd"; # TPM support somehow breaks this
   networking.wireless.iwd.enable = true;
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -126,10 +134,10 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
-  lon
-  sbctl
+    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    #  wget
+    lon
+    sbctl
   ];
 
   nix.settings.experimental-features = [

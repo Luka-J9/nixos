@@ -50,16 +50,15 @@
         baccata.scaladex-search
         gleam.gleam
       ];
-      profiles.default.userSettings =
-          {
-            "files.autoSave" = "off";
-            "files.watcherExclude" = {
-              "**/.bloop" = true;
-              "**/.metals" = true;
-              "**/.ammonite" = true;
-            };
-            "github.copilot.nextEditSuggestions.enabled"= true;
-          };
+      profiles.default.userSettings = {
+        "files.autoSave" = "off";
+        "files.watcherExclude" = {
+          "**/.bloop" = true;
+          "**/.metals" = true;
+          "**/.ammonite" = true;
+        };
+        "github.copilot.nextEditSuggestions.enabled" = true;
+      };
     };
 
     xdg.desktopEntries = {
