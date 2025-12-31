@@ -10,7 +10,6 @@
     home.packages = with pkgs; [
       git
       nixd
-      kitty
       scala
       scalafmt
       scalafix
