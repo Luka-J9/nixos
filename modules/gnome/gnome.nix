@@ -2,8 +2,8 @@
 
 {
   # Enable GNOME
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
 
   # Remove decorations for QT applications
   environment.sessionVariables = {
@@ -11,9 +11,10 @@
   };
 
   # Excluding some GNOME applications from the default install
-  environment.gnome.excludePackages =
-    (with pkgs; [
-      atomix 
+  environment.gnome.excludePackages = (
+    with pkgs;
+    [
+      atomix
       gedit
       gnome-connections
       gnome-console
@@ -43,7 +44,8 @@
       hitori # sudoku game
       iagno # go game
       tali # poker game
-    ]);    
+    ]
+  );
 
   # List of Gnome specific packages
   environment.systemPackages = with pkgs; [

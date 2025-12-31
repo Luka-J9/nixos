@@ -6,32 +6,18 @@
 }:
 
 let
-  cfg = config.programs.signal;
-in
-{
-
-  options = {
-    programs = {
-      signal = {
-        enable = lib.mkEnableOption "Enable Signal";
-
-        autostart = {
-          enable = lib.mkOption {
-            type = lib.types.bool;
-            description = "Enable autostarting Signal";
-            default = false;
-          };
-          background = lib.mkOption {
-            type = lib.types.bool;
-            description = "Set signal to run in background";
-            default = false;
-          };
-        };
-      };
+  defaults = {
+    autostart = {
+      enable = true;
+      background = true;
     };
-
   };
 
+  cfg =
+    defaults // (if config ? programs && config.programs ? signal then config.programs.signal else { });
+in
+
+{
   config = {
     home.packages = with pkgs; [ signal-desktop ];
     home.file = {
