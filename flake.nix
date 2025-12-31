@@ -37,10 +37,10 @@
           };
           modules = [
             ./hosts/framework-desktop/configuration.nix
-             lanzaboote.nixosModules.lanzaboote
+            lanzaboote.nixosModules.lanzaboote
             agenix.nixosModules.age
             { environment.systemPackages = [ agenix.packages.x86_64-linux.default ]; }
-             nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
+            nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
           ];
         };
       };
