@@ -83,7 +83,7 @@
             name = "New Empty Window";
           };
           "nix-os-env" = {
-            exec = "code --new-window /home/nix";
+            exec = "code --new-window /home/nixos";
             icon = "vscode";
             name = "Open Nix Configuration";
           };

@@ -5,81 +5,58 @@ This file documents the manual setup steps performed interactively on the host. 
 
 ## Steps
 
-1. Clone the repo (example):
+0. Secure Boot
+Hit F2 and disable Secure Boot under Administer Security (or something similarly named, has a shield).
 
-```sh
-git clone https://github.com/Luka-J9/nixos.git
-cd nixos/
-```
+Additionally hit the setting that clears the the default secure boot keys.
 
-If you used `sudo` to clone into a directory owned by root, fix ownership:
-
-```sh
-sudo chown -R luka:users nixos/
-```
-
-
-2. Use `nix-shell` to grab tools (example includes `_1password-gui`):
+1. Use `nix-shell` to grab tools:
 
 ```sh
 nix-shell -p git sbctl _1password-gui
 ```
 
+2. Clone the repo:
 
-3. Regenerate `hardware-configuration.nix` (when hardware changes)
+```sh
+cd /home
+git clone https://github.com/Luka-J9/nixos.git
+sudo chown -R luka:users nixos/
+cd nixos/
+```
+
+3. Copy `hardware-configuration.nix`
 
 If you've changed hardware or need to refresh the detected configuration, generate a new hardware config on the target machine and copy it into the flake repo:
 
 ```sh
-# On the target machine (generates /etc/nixos/hardware-configuration.nix)
-sudo nixos-generate-config --root /
-
-# Review the generated file at /etc/nixos/hardware-configuration.nix
-# Then copy it into the repo (adjust path as needed):
 sudo cp /etc/nixos/hardware-configuration.nix /home/nixos/hosts/framework-desktop/hardware-configuration.nix
-
-# Commit the change from the repo working tree:
-git add hosts/framework-desktop/hardware-configuration.nix
-git commit -m "Regenerate hardware-configuration.nix"
 ```
 
-4. Rebuild the system (example target `desktop`):
-
-```sh
-sudo nixos-rebuild switch --recreate-lock-file --flake .#desktop
-```
-
-5. Create Secure Boot keys with `sbctl`:
-
-```sh
-sudo sbctl create-keys
-```
-
-6. 1Password and agenix / SSH key handling
+4. 1Password and agenix / SSH key handling
 
 - Launch the 1Password GUI to access secrets as you normally do.
-- If you use `agenix`/age-encrypted secrets, you might have downloaded or decrypted a private key into your home `.ssh` directory. Example steps used interactively:
+- If you use `agenix`/age-encrypted secrets, you might have downloaded or decrypted a private key into your home `.ssh` directory.:
 
 ```sh
-# (example — adjust filenames)
-mkdir -p /home/luka/.ssh
-# move/download/decrypt the file into your home .ssh
-mv agenix /home/luka/.ssh/agenix
-chmod 700 /home/luka/.ssh
-
-# copy a decrypted key into root if needed (only when intended):
 sudo cp /home/luka/.ssh/agenix /root/.ssh/id_ed25519
 sudo chown root:root /root/.ssh/id_ed25519
 sudo chmod 600 /root/.ssh/id_ed25519
 ```
 
-Note: copying keys to `/root` should only be done when you understand the consequences. Replace `agenix` with the actual filename of your private key.
+5. Rebuild the system (example target `desktop`):
 
-## Notes & safety
+```sh
+sudo nixos-rebuild switch --recreate-lock-file --flake .#desktop
+```
 
-- Replace `luka` with your username where appropriate.
-- Prefer to avoid `sudo` when cloning as a regular user; fix permissions instead.
-- Keep private keys secure and set correct permissions (`600`) and ownership (`root:root`) when placed under `/root/.ssh`.
+6. Update Git
 
-If you want, I can commit this README update, run any of the commands here, or expand the steps with screenshots/age commands — tell me which next.
+You may need to go into 1password and enable SSH agent for access
+
+```sh
+cd /home/nixos
+git remote set-url origin git@github.com:Luka-J9/nixos.git
+git commit -am "hardware configuration update"
+```
 
