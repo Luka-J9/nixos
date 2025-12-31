@@ -11,16 +11,11 @@
 }:
 
 let
-  sources = import ./lon.nix;
-  lanzaboote = import sources.lanzaboote;
   mainUser = "luka";
 in
 {
   imports = [
-    # Include the results of the hardware scan.
     inputs.home-manager.nixosModules.default
-
-    lanzaboote.nixosModules.lanzaboote
     ./hardware-configuration.nix
     ../../modules/steam/steam.nix
     ../../modules/gnome/gnome.nix
@@ -62,10 +57,41 @@ in
   boot.lanzaboote = {
     enable = true;
     pkiBundle = "/var/lib/sbctl";
+    autoGenerateKeys.enable = true;
+    autoEnrollKeys = {
+      enable = true;
+      autoReboot = true;
+    };
   };
+
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  boot = {
+    plymouth = {
+      enable = true;
+      theme = "rings";
+      themePackages = with pkgs; [
+        # By default we would install all themes
+        (adi1090x-plymouth-themes.override {
+          selected_themes = [ "rings" ];
+        })
+      ];
+    };
+
+    # Enable "Silent boot"
+    consoleLogLevel = 3;
+    initrd.verbose = false;
+    kernelParams = [
+      "quiet"
+      "splash"
+      "boot.shell_on_fail"
+      "udev.log_priority=3"
+      "rd.systemd.show_status=auto"
+    ];
+    loader.timeout = 3;
+  };
 
   networking.hostName = "framework-desktop"; # Define your hostname.
   networking.networkmanager.wifi.backend = "iwd"; # TPM support somehow breaks this

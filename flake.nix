@@ -12,6 +12,12 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v1.0.0";
+
+      # Optional but recommended to limit the size of your system closure.
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -20,6 +26,7 @@
       nixpkgs,
       agenix,
       nixos-hardware,
+      lanzaboote,
       ...
     }@inputs:
     {
@@ -30,6 +37,7 @@
           };
           modules = [
             ./hosts/framework-desktop/configuration.nix
+             lanzaboote.nixosModules.lanzaboote
             agenix.nixosModules.age
             { environment.systemPackages = [ agenix.packages.x86_64-linux.default ]; }
              nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
