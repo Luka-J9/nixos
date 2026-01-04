@@ -16,6 +16,7 @@
     ../../modules/discord/discord.nix
     ../../modules/gnome/gnome-home.nix
     ../../modules/ghostty/ghostty.nix
+    ../../modules/hyprland/hyprland.nix
   ];
 
   # This value determines the Home Manager release that your configuration is
