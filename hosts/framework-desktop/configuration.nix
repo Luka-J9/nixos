@@ -91,6 +91,11 @@ in
       "boot.shell_on_fail"
       "udev.log_priority=3"
       "rd.systemd.show_status=auto"
+
+      "amdgpu.gttsize=65536"
+      "ttm.pages_limit=16777216" # Authorizes ~64GB (16.7M * 4KB pages)
+      "ttm.page_pool_size=16777216"
+      "amdgpu.cwsr_enable=0" # Disables compute wave save/restore (fixes many iGPU crashes)
     ];
     loader.timeout = 3;
   };

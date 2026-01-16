@@ -7,12 +7,6 @@
 }:
 {
   config = {
-    services.ollama = {
-      enable = true;
-      package = pkgs.ollama-rocm;
-    };
-    
-
     xdg.desktopEntries.openwebui = {
       name = "Open WebUI";
       exec = "chromium --app=http://localhost:8083";
