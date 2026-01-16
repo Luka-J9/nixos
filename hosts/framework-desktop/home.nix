@@ -39,13 +39,12 @@
     face = ../../modules/gnome/icons/profile.png;
   };
 
-  home.ollamaPreload = {
-    models = [
-      "llama3.2:1b"
-      "qwen3-coder:latest"
-      "deepseek-r1:latest"
-      "mistral-7b-chat"
-    ];
-  };
+  home.ollamaPreload.models = [
+    "llama3.2:1b"
+    "qwen3-coder:latest"
+    "deepseek-r1:latest"
+    "mistral-7b-chat"
+  ];
+
 
 }

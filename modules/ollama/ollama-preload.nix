@@ -1,7 +1,11 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
-  # default list of models
   defaultModels = [
     "llama3.2:1b"
     "qwen3-coder:latest"
@@ -9,7 +13,7 @@ let
   ];
 in
 {
-  options.home-manager.users.ollamaPreload = {
+  options.home.ollamaPreload = {
     models = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = defaultModels;
@@ -17,9 +21,9 @@ in
     };
   };
 
-  config = lib.mkIf (config.home-manager.users.ollamaPreload != null) (let
-      modelsToPreload = config.home-manager.users.ollamaPreload.models;
-      pullCommands = pkgs.lib.concatStringsSep "\n" (map (model: "${pkgs.ollama}/bin/ollama pull ${model}") modelsToPreload);
+  config = lib.mkIf (config.home.ollamaPreload != null) (
+    let
+      modelsToPreload = config.home.ollamaPreload.models;
     in
     {
       systemd.user.services.ollama-preload = {
@@ -29,11 +33,11 @@ in
         };
         Service = {
           Type = "oneshot";
-          ExecStart = ''
-            ${pullCommands}
-          '';
+          ExecStart = map (model: "${pkgs.ollama}/bin/ollama pull ${model}") modelsToPreload;
           Restart = "on-failure";
           RestartSec = 5;
+          StandardOutput = "journal";
+          StandardError = "journal";
         };
         Install.WantedBy = [ "default.target" ];
       };
