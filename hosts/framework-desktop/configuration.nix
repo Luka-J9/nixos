@@ -19,6 +19,9 @@ in
     ./hardware-configuration.nix
     ../../modules/steam/steam.nix
     ../../modules/gnome/gnome.nix
+    ../../modules/ollama/ollama.nix
+    ../../modules/pipewire/pipewire.nix
+    ../../modules/hyprland/hyprland.nix
   ];
 
   users.users = {

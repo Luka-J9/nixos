@@ -16,7 +16,9 @@
     ../../modules/discord/discord.nix
     ../../modules/gnome/gnome-home.nix
     ../../modules/ghostty/ghostty.nix
-    ../../modules/hyprland/hyprland.nix
+    ../../modules/ollama/ollama-home.nix
+    ../../modules/ollama/ollama-preload.nix
+    ../../modules/hyprland/hyprland-home.nix
   ];
 
   # This value determines the Home Manager release that your configuration is
@@ -36,4 +38,14 @@
     wallpaper = ../../modules/gnome/wallpapers/shorewallpaper-ultrawide.png;
     face = ../../modules/gnome/icons/profile.png;
   };
+
+  home.ollamaPreload = {
+    models = [
+      "llama3.2:1b"
+      "qwen3-coder:latest"
+      "deepseek-r1:latest"
+      "mistral-7b-chat"
+    ];
+  };
+
 }

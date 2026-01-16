@@ -2,8 +2,14 @@
   description = "Nixos config flake";
 
   inputs = {
+    hyprland.url = "github:hyprwm/Hyprland";
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixos-hardware.url = "github:NixOS/nixos-hardware";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
+nixos-hardware.url = "github:NixOS/nixos-hardware?ref=9b3c38bf6c260d0e88154ef07fa833fa845bfd14"; # Pinned because I had some issues where updating it broke ollama
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -24,6 +30,7 @@
     {
       self,
       nixpkgs,
+      nixpkgs-stable,
       agenix,
       nixos-hardware,
       lanzaboote,
@@ -34,6 +41,10 @@
         desktop = nixpkgs.lib.nixosSystem {
           specialArgs = {
             inherit inputs;
+            pkgs-stable = import nixpkgs-stable {
+              system = "x86_64-linux";
+              config.allowUnfree = true;
+            };
           };
           modules = [
             ./hosts/framework-desktop/configuration.nix
