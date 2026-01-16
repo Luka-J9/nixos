@@ -23,7 +23,7 @@
       direnv
       devenv
 
-      nixfmt-rfc-style
+      nixfmt
 
       gleam
 

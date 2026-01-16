@@ -9,7 +9,7 @@
     };
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
-nixos-hardware.url = "github:NixOS/nixos-hardware?ref=9b3c38bf6c260d0e88154ef07fa833fa845bfd14"; # Pinned because I had some issues where updating it broke ollama
+    nixos-hardware.url = "github:NixOS/nixos-hardware?ref=9b3c38bf6c260d0e88154ef07fa833fa845bfd14"; # Pinned because I had some issues where updating it broke ollama
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
