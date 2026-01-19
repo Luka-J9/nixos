@@ -298,19 +298,15 @@
       # INPUT FIELD
       "input-field" = {
         monitor = "";
-        size = "300, 50";
+        size = "300, 60";
         outline_thickness = 2;
         dots_size = 0.2;
         dots_spacing = 0.2;
         dots_center = true;
-        # outer_color = "rgba(0, 0, 0, 0)";
-        # inner_color = "rgba(255, 255, 255, 0.1)";
-        # font_color = "rgb(200, 200, 200)";s
         fade_on_empty = false;
-        font_size = 12;
+        font_size = 8;
         font_family = "SF Pro Display Bold";
-        placeholder_text = "<i><span foreground=\"##ffffff99\">Input Password</span></i>";
-        rounding = 0;
+        placeholder_text = "<i><span foreground=\"##ffffff99\">Input Password...</span></i>";
         hide_input = false;
         position = "0, -210";
         halign = "center";

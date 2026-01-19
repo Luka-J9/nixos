@@ -94,6 +94,7 @@ in
     loader.timeout = 3;
   };
 
+  hardware.bluetooth.enable = true;
   networking.hostName = "framework-desktop"; # Define your hostname.
   networking.networkmanager.wifi.backend = "iwd"; # TPM support somehow breaks this
   networking.wireless.iwd.enable = true;
