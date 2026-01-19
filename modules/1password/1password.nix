@@ -17,21 +17,6 @@
       ".config/1Password/ssh/agent.toml" = {
         source = ./agent.toml;
       };
-
-      ".config/autostart/${pkgs._1password-gui.pname}.desktop" = {
-        text = ''
-          [Desktop Entry]
-          Name=1Password
-          Exec=1password --silent-launch
-          Terminal=false
-          Type=Application
-          Icon=1password
-          StartupWMClass=1Password
-          Comment=Password manager and secure wallet
-          MimeType=x-scheme-handler/onepassword;
-          Categories=Office;
-        '';
-      };
     };
 
     programs.ssh = {

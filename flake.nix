@@ -2,6 +2,7 @@
   description = "Nixos config flake";
 
   inputs = {
+    stylix.url = "github:danth/stylix";
     hyprland.url = "github:hyprwm/Hyprland";
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
@@ -34,6 +35,7 @@
       agenix,
       nixos-hardware,
       lanzaboote,
+      stylix,
       ...
     }@inputs:
     {
@@ -48,6 +50,7 @@
           };
           modules = [
             ./hosts/framework-desktop/configuration.nix
+            stylix.nixosModules.stylix
             lanzaboote.nixosModules.lanzaboote
             agenix.nixosModules.age
             { environment.systemPackages = [ agenix.packages.x86_64-linux.default ]; }

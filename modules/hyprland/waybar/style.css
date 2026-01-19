@@ -1,0 +1,137 @@
+/* Remove the wal import as Stylix handles colors automatically */
+
+* {
+    /* Stylix will inject the font-family and font-size automatically if enabled */
+    /* but you can keep these variables to use the ones from your Nix config */
+    font-family: "JetBrainsMono Nerd Font Mono", "Symbols Nerd Font Mono";
+    font-size: 15px;
+}
+
+window#waybar {
+    all: unset;
+}
+
+.modules-left {
+    padding: 7px;
+    margin: 10px 0 5px 10px;
+    border-radius: 10px;
+    background: alpha(@base00, 0.6);
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.6);
+}
+
+.modules-center {
+    padding: 7px;
+    margin: 10px 0 5px 0;
+    border-radius: 10px;
+    background: alpha(@base00, 0.6);
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.6);
+}
+
+.modules-right {
+    padding: 7px;
+    margin: 10px 10px 5px 0;
+    border-radius: 10px;
+    background: alpha(@base00, 0.6);
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.6);
+}
+
+tooltip {
+    background: @base00;
+    color: @base05;
+}
+
+#clock:hover,
+#custom-pacman:hover,
+#custom-notification:hover,
+#bluetooth:hover,
+#network:hover,
+#battery:hover,
+#cpu:hover,
+#memory:hover,
+#temperature:hover {
+    transition: all 0.3s ease;
+    color: @base0D;
+    /* Accent color */
+}
+
+#custom-notification,
+#clock,
+#custom-pacman,
+#bluetooth,
+#network,
+#battery,
+#cpu,
+#memory,
+#temperature {
+    padding: 0px 5px;
+    color: @base05;
+    /* Foreground/Text */
+    transition: all 0.3s ease;
+}
+
+#workspaces {
+    padding: 0px 5px;
+}
+
+#workspaces button {
+    all: unset;
+    padding: 0px 5px;
+    color: alpha(@base0D, 0.4);
+    transition: all 0.2s ease;
+}
+
+#workspaces button:hover {
+    color: rgba(0, 0, 0, 0);
+    border: none;
+    text-shadow: 0px 0px 1.5px rgba(0, 0, 0, 0.5);
+    transition: all 1s ease;
+}
+
+#workspaces button.active {
+    color: @base0D;
+    border: none;
+    text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
+}
+
+#workspaces button.empty {
+    color: rgba(0, 0, 0, 0);
+    border: none;
+    text-shadow: 0px 0px 1.5px rgba(0, 0, 0, 0.2);
+}
+
+#workspaces button.empty.active {
+    color: @base0D;
+}
+
+#battery.charging {
+    color: @base0B;
+    /* Green */
+}
+
+#battery.warning:not(.charging) {
+    color: @base0A;
+    /* Yellow/Orange */
+}
+
+#battery.critical:not(.charging) {
+    color: @base08;
+    /* Red */
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#custom-expand {
+    padding: 0px 5px;
+    color: alpha(@base05, 0.2);
+    text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.7);
+    transition: all 0.3s ease;
+}
+
+#tray,
+#tray menu * {
+    padding: 0px 5px;
+    transition: all 0.3s ease;
+}

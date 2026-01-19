@@ -6,6 +6,9 @@
 }:
 
 let
+  # Added the flag to a variable for consistency
+  signalFlags = "--password-store=\"gnome-libsecret\"";
+
   defaults = {
     autostart = {
       enable = true;
@@ -20,25 +23,25 @@ in
 {
   config = {
     home.packages = with pkgs; [ signal-desktop ];
-    home.file = {
 
-      ".config/autostart/${pkgs.signal-desktop.pname}.desktop" = {
-        text = ''
-          [Desktop Entry]
-          Name=Signal
-          Exec=${pkgs.signal-desktop.outPath}/bin/signal-desktop --no-sandbox ${
-            if cfg.autostart.background then "--start-in-tray" else ""
-          } %U
-          Terminal=false
-          Type=Application
-          Icon=signal-desktop
-          StartupWMClass=signal
-          Comment=Private messaging from your desktop
-          MimeType=x-scheme-handler/sgnl;x-scheme-handler/signalcaptcha;
-          Categories=Network;InstantMessaging;Chat;    
-        '';
+    home.sessionVariables = {
+      SIGNAL_PASSWORD_STORE = "gnome-libsecret";
+    };
+
+    xdg.desktopEntries = {
+      "signal" = {
+        name = "Signal";
+        exec = "signal-desktop --password-store=\"gnome-libsecret\" %U";
+        terminal = false;
+        icon = "signal-desktop";
+        type = "Application";
+        categories = [
+          "Network"
+          "InstantMessaging"
+          "Chat"
+        ];
+        mimeType = [ "x-scheme-handler/sgnl" ];
       };
     };
   };
-
 }
