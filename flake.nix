@@ -2,7 +2,14 @@
   description = "Nixos config flake";
 
   inputs = {
+    stylix.url = "github:danth/stylix";
+    hyprland.url = "github:hyprwm/Hyprland";
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -24,9 +31,11 @@
     {
       self,
       nixpkgs,
+      nixpkgs-stable,
       agenix,
       nixos-hardware,
       lanzaboote,
+      stylix,
       ...
     }@inputs:
     {
@@ -34,9 +43,14 @@
         desktop = nixpkgs.lib.nixosSystem {
           specialArgs = {
             inherit inputs;
+            pkgs-stable = import nixpkgs-stable {
+              system = "x86_64-linux";
+              config.allowUnfree = true;
+            };
           };
           modules = [
             ./hosts/framework-desktop/configuration.nix
+            stylix.nixosModules.stylix
             lanzaboote.nixosModules.lanzaboote
             agenix.nixosModules.age
             { environment.systemPackages = [ agenix.packages.x86_64-linux.default ]; }

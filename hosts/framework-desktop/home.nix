@@ -14,8 +14,10 @@
     ../../modules/signal/signal.nix
     ../../modules/chromium/chromium.nix
     ../../modules/discord/discord.nix
-    ../../modules/gnome/gnome-home.nix
     ../../modules/ghostty/ghostty.nix
+    ../../modules/ollama/ollama-home.nix
+    ../../modules/ollama/ollama-preload.nix
+    ../../modules/hyprland/hyprland-home.nix
   ];
 
   # This value determines the Home Manager release that your configuration is
@@ -30,9 +32,11 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  # gnome overrides for wallpaper and face (can be customized)
-  home.gnome = {
-    wallpaper = ../../modules/gnome/wallpapers/shorewallpaper-ultrawide.png;
-    face = ../../modules/gnome/icons/profile.png;
-  };
+  home.ollamaPreload.models = [
+    "llama3.2:1b"
+    "qwen3-coder:latest"
+    "deepseek-r1:latest"
+    "mistral-7b-chat"
+  ];
+
 }
