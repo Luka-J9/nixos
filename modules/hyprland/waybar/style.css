@@ -3,7 +3,7 @@
 * {
     /* Stylix will inject the font-family and font-size automatically if enabled */
     /* but you can keep these variables to use the ones from your Nix config */
-    font-family: "JetBrainsMono Nerd Font Mono", "Symbols Nerd Font Mono";
+    font-family: "Material Symbols Outlined";
     font-size: 15px;
 }
 

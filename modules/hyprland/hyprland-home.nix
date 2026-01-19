@@ -5,9 +5,19 @@
   inputs,
   ...
 }:
+let
+  toggle-mic = pkgs.writeShellApplication {
+    name = "toggle-mic";
+    runtimeInputs = [
+      pkgs.wireplumber
+      pkgs.hyprland
+    ]; # Provides wpctl and hyprctl
+    text = builtins.readFile ./scripts/toggle-mic.sh;
+  };
+in
 {
   imports = [
-    inputs.stylix.homeManagerModules.stylix
+    inputs.stylix.homeModules.stylix
   ];
 
   # Enable the service properly (replaces manual exec-once)
@@ -48,7 +58,7 @@
       };
     };
 
-    iconTheme = {
+    icons = {
       enable = true;
       package = pkgs.papirus-icon-theme;
       dark = "Papirus-Dark";
@@ -76,6 +86,9 @@
   };
 
   home.packages = with pkgs; [
+    toggle-mic
+    pavucontrol # audiocontrol
+    material-symbols
     font-awesome # For the Font Awesome glyphs
     nerd-fonts.symbols-only # The "Master" icon font for 2026
     nerd-fonts.jetbrains-mono
@@ -98,10 +111,9 @@
       exec-once = [
         "uwsm finalize SSH_AUTH_SOCK"
         "hyprlock && uwsm app -- signal-desktop --start-in-tray --password-store=\"gnome-libsecret\""
-        "waybar"
-        "hyprpaper"
-        "1password --silent"
-        "discord --start-minimized"
+        "uwsm app -- waybar"
+        "uwsm app -- 1password --silent"
+        "uwsm app -- discord --start-minimized"
       ];
 
       env = [
@@ -143,12 +155,20 @@
         "$mainMod, P, pseudo"
         "$mainMod, J, layoutmsg, togglesplit"
         "$mainMod, L, exec, hyprlock"
+        ",XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        "$mainMod, Delete, exec, ${toggle-mic}/bin/toggle-mic"
+      ];
+
+      binde = [
+        ",XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+"
+        ",XF86AudioLowerVolume, exec, wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-"
       ];
 
       dwindle = {
         pseudotile = true;
         force_split = 2;
         preserve_split = true;
+        single_window_aspect_ratio = "5 4";
       };
 
       bindm = [
@@ -230,21 +250,21 @@
       ];
 
       # SHAPE (The "Blurred" Box effect)
-      shape = [
-        {
-          monitor = "";
-          size = "300, 60";
-          color = "rgba(255, 255, 255, .1)";
-          rounding = -1;
-          border_size = 0;
-          border_color = "rgba(253, 198, 135, 0)";
-          rotate = 0;
-          xray = false;
-          position = "0, -130";
-          halign = "center";
-          valign = "center";
-        }
-      ];
+      # shape = [
+      #   {
+      #     monitor = "";
+      #     size = "300, 60";
+      #     color = "rgba(255, 255, 255, .1)";
+      #     rounding = -1;
+      #     border_size = 0;
+      #     border_color = "rgba(253, 198, 135, 0)";
+      #     rotate = 0;
+      #     xray = false;
+      #     position = "0, -130";
+      #     halign = "center";
+      #     valign = "center";
+      #   }
+      # ];
 
       # LABELS (Date, Time, User, Song)
       label = [
@@ -275,40 +295,31 @@
           monitor = "";
           text = "Luka Jurukovski";
           color = "rgba(216, 222, 233, 0.80)";
-          outline_thickness = 2;
-          font_size = 16;
+          # outline_thickness = 2;
+          font_size = 18;
           font_family = "SF Pro Display Bold";
-          position = "0, -130";
+          position = "0, -100";
           halign = "center";
           valign = "center";
         }
-        # CURRENT SONG
-        # {
-        #   monitor = "";
-        #   text = "cmd[update:1000] echo \"$(~/.config/hypr/Scripts/songdetail.sh)\"";
-        #   color = "rgba(255, 255, 255, 0.6)";
-        #   font_size = 18;
-        #   font_family = "JetBrains Mono Nerd, SF Pro Display Bold";
-        #   position = "0, 50";
-        #   halign = "center";
-        #   valign = "bottom";
-        # }
       ];
 
       # INPUT FIELD
       "input-field" = {
         monitor = "";
-        size = "300, 60";
+        size = "300, 45";
         outline_thickness = 2;
         dots_size = 0.2;
         dots_spacing = 0.2;
         dots_center = true;
-        fade_on_empty = false;
+        rounding = 25;
+        inner_color = lib.mkForce "rgba(255, 255, 255, 0.05)";
         font_size = 8;
         font_family = "SF Pro Display Bold";
-        placeholder_text = "<i><span foreground=\"##ffffff99\">Input Password...</span></i>";
+        placeholder_text = "<i><span foreground=\"##ffffff99\">Enter Password...</span></i>";
         hide_input = false;
-        position = "0, -210";
+        fade_on_empty = false;
+        position = "0, -175";
         halign = "center";
         valign = "center";
       };
