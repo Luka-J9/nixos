@@ -31,6 +31,9 @@ in
     targets.vscode = {
       enable = false;
     };
+    targets.obsidian = {
+      enable = false;
+    };
 
     opacity = {
       desktop = 0.6;
