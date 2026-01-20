@@ -2,6 +2,7 @@
     "layer": "top",
     "position": "top",
     "reload_style_on_change": true,
+    "spacing": 10,
     "modules-center": [
         "custom/notification",
         "clock",
@@ -61,16 +62,16 @@
         }
     },
     "network": {
-        "format-wifi": "",
-        "format-ethernet": "",
-        "format-disconnected": "",
+        "format-wifi": "<span font_size='15pt' rise='0'></span> <span font_size='11pt' rise='2000'>{essid}</span>",
+        "format-ethernet": "<span font_size='15pt' rise='0'></span> <span font_size='11pt' rise='2000'>{ifname}</span>",
+        "format-disconnected": "<span font_size='15pt' rise='0'></span> <span font_size='11pt' rise='2000'>Disconnected</span>",
         "tooltip-format-disconnected": "Error",
         "tooltip-format-wifi": "{essid} ({signalStrength}%) ",
         "tooltip-format-ethernet": "{ifname} 🖧 ",
         "on-click": "ghostty -e nmtui"
     },
     "pulseaudio": {
-        "format": "{icon} <span font_size='11pt' rise='1000'>{volume}%</span>",
+        "format": "<span font_size='15pt' rise='0'>{icon}</span> <span font_size='11pt' rise='2000'>{volume}%</span>",
         "format-bluetooth": "{icon} {volume}%",
         "icon-size": 20,
         "format-muted": "<span size='large'>  </span> Muted",
@@ -91,8 +92,8 @@
     },
     "pulseaudio#microphone": {
         "format": "{format_source}",
-        "format-source": "<span size='large' font_weight='bold'></span> <span rise='1000'>{volume}%</span>",
-        "format-source-muted": " Muted",
+        "format-source": "<span font_size='15pt' rise='0'></span> <span font_size='11pt' rise='2000'>{volume}%</span>",
+        "format-source-muted": "<span font_size='15pt' rise='0'></span> <span font_size='11pt' rise='2000'>Muted</span>",
         "on-click": "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle",
         "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 1%+",
         "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 1%-"
