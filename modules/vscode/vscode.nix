@@ -48,6 +48,7 @@
         scala-lang.scala
         baccata.scaladex-search
         gleam.gleam
+        hashicorp.terraform
       ];
       profiles.default.userSettings = {
         "files.autoSave" = "off";

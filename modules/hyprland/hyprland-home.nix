@@ -9,8 +9,7 @@ let
   toggle-mic = pkgs.writeShellApplication {
     name = "toggle-mic";
     runtimeInputs = [
-      pkgs.wireplumber
-      pkgs.hyprland
+      pkgs.pamixer
     ]; # Provides wpctl and hyprctl
     text = builtins.readFile ./scripts/toggle-mic.sh;
   };
@@ -32,6 +31,9 @@ in
       enable = false;
     };
     targets.obsidian = {
+      enable = false;
+    };
+    targets.zed = {
       enable = false;
     };
 
@@ -77,7 +79,35 @@ in
   programs.rofi.enable = true;
   programs.hyprshot.enable = true;
   programs.waybar.enable = true;
-  services.swaync.enable = true;
+  services.swaync.enable = false;
+
+  services.mako = {
+    enable = true;
+
+    # Appearance
+    font = lib.mkForce "JetBrainsMono Nerd Font 10";
+    # backgroundColor = "#1e1e2ecc";
+    # textColor = "#cdd6f4";
+    # borderColor = "#89b4fa";
+    borderSize = 0;
+    borderRadius = 12;
+    padding = "12";
+    margin = "10,20";
+    width = 320;
+    height = 100;
+    maxIconSize = 48;
+    markup = true;
+    actions = true;
+
+    # Behavior
+    defaultTimeout = 4000;
+    ignoreTimeout = false;
+    groupBy = "app-name";
+    maxVisible = 4;
+    layer = "overlay";
+    anchor = "top-right";
+  };
+
   services.hyprpaper.enable = true;
   services.blueman-applet.enable = true;
 
@@ -89,6 +119,8 @@ in
   };
 
   home.packages = with pkgs; [
+    pipewire
+    pamixer
     toggle-mic
     pavucontrol # audiocontrol
     material-symbols
@@ -117,6 +149,7 @@ in
         "uwsm app -- waybar"
         "uwsm app -- 1password --silent"
         "uwsm app -- discord --start-minimized"
+        "exec wpctl status > /dev/null && wpctl inspect @DEFAULT_SOURCE@ > /dev/null"
       ];
 
       env = [
@@ -139,6 +172,7 @@ in
         "$mainMod, m, fullscreen, 1"
         "$mainMod, s, togglefloating"
         "$mainMod, t, fullscreen, 0"
+        
         "$mainMod, 1, workspace, 1"
         "$mainMod, 2, workspace, 2"
         "$mainMod, 3, workspace, 3"
@@ -148,6 +182,17 @@ in
         "$mainMod, 7, workspace, 7"
         "$mainMod, 8, workspace, 8"
         "$mainMod, 9, workspace, 9"
+
+        "$mainMod SHIFT, 1, movetoworkspace, 1"
+        "$mainMod SHIFT, 2, movetoworkspace, 2"
+        "$mainMod SHIFT, 3, movetoworkspace, 3"
+        "$mainMod SHIFT, 4, movetoworkspace, 4"
+        "$mainMod SHIFT, 5, movetoworkspace, 5"
+        "$mainMod SHIFT, 6, movetoworkspace, 6"
+        "$mainMod SHIFT, 7, movetoworkspace, 7"
+        "$mainMod SHIFT, 8, movetoworkspace, 8"
+        "$mainMod SHIFT, 9, movetoworkspace, 9"
+
         "$mainMod, XF86KbdBrightnessDown, exec, ${pkgs.hyprshot}/bin/hyprshot -m window" # F5
         "$mainMod, XF86LaunchB, exec, ${pkgs.hyprshot}/bin/hyprshot -m region" # F4
         "$mainMod, Tab, cyclenext,"
@@ -155,6 +200,13 @@ in
         "$mainMod, right, movefocus, r"
         "$mainMod, up, movefocus, u"
         "$mainMod, down, movefocus, d"
+        "$mainMod SHIFT, left, movewindow, l"
+        "$mainMod SHIFT, right, movewindow, r"
+        "$mainMod SHIFT, up, movewindow, u"
+        "$mainMod SHIFT, down, movewindow, d"
+        "$mainMod CTRL, down, exec, hyprctl dispatch layoutmsg togglesplit ; hyprctl dispatch swapwindow d"
+        "$mainMod CTRL, up, exec, hyprctl dispatch layoutmsg togglesplit ; hyprctl dispatch swapwindow u"
+
         "$mainMod, P, pseudo"
         "$mainMod, J, layoutmsg, togglesplit"
         "$mainMod, L, exec, hyprlock"
@@ -251,23 +303,6 @@ in
           valign = "center";
         }
       ];
-
-      # SHAPE (The "Blurred" Box effect)
-      # shape = [
-      #   {
-      #     monitor = "";
-      #     size = "300, 60";
-      #     color = "rgba(255, 255, 255, .1)";
-      #     rounding = -1;
-      #     border_size = 0;
-      #     border_color = "rgba(253, 198, 135, 0)";
-      #     rotate = 0;
-      #     xray = false;
-      #     position = "0, -130";
-      #     halign = "center";
-      #     valign = "center";
-      #   }
-      # ];
 
       # LABELS (Date, Time, User, Song)
       label = [

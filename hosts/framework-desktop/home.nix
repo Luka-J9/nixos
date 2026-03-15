@@ -10,7 +10,7 @@
 
   imports = [
     ../../modules/vscode/vscode.nix
-    ../../modules/1password/1password.nix
+    ../../modules/1password/1password-home.nix
     ../../modules/signal/signal.nix
     ../../modules/chromium/chromium.nix
     ../../modules/discord/discord.nix
@@ -19,6 +19,7 @@
     ../../modules/ollama/ollama-preload.nix
     ../../modules/hyprland/hyprland-home.nix
     ../../modules/obsidian/obsidian.nix
+    ../../modules/zed/zed.nix
   ];
 
   # This value determines the Home Manager release that your configuration is

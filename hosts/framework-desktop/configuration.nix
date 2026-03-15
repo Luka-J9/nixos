@@ -17,9 +17,11 @@ in
   imports = [
     inputs.home-manager.nixosModules.default
     ./hardware-configuration.nix
+    ../../modules/1password/1password.nix
     ../../modules/steam/steam.nix
     ../../modules/ollama/ollama.nix
     ../../modules/pipewire/pipewire.nix
+    ../../modules/netbird/netbird.nix
     ../../modules/hyprland/hyprland.nix
   ];
 
@@ -34,6 +36,16 @@ in
         "networkmanager"
       ];
     };
+  };
+
+  security.sudo = {
+    enable = true;
+    wheelNeedsPassword = false;
+  };
+
+  my.onepassword = {
+    enable = true;
+    username = mainUser; 
   };
 
   age = {
@@ -161,13 +173,17 @@ in
     #  wget
     lon
     sbctl
+    metals # TODO: move to correct location
   ];
 
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
   ];
-
+  nix.settings.trusted-users = [
+    "root"
+    "luka"
+  ];
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave

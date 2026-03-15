@@ -13,36 +13,42 @@ window#waybar {
 
 .modules-left {
     padding: 7px;
-    margin: 10px 0 5px 10px;
+    /* Changed 5px to 0px (bottom margin) */
+    margin: 10px 0 0px 20px;
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.6);
+    /* box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.6); */
 }
 
 .modules-center {
     padding: 7px;
-    margin: 10px 0 5px 0;
+    /* Changed 5px to 0px (bottom margin) */
+    margin: 10px 0 0px 0;
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.6);
+    /* box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.6); */
 }
 
 .modules-right {
     padding: 7px;
-    margin: 10px 10px 5px 0;
+    /* Changed 5px to 0px (bottom margin) */
+    margin: 10px 20px 0px 0;
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.6);
+    /* box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.6); */
 }
 
-tooltip {
-    background: rgba(255, 255, 255, 0.08);
-    color: @base05;
+/* Styling for tooltips */
+#tooltip {
+    background: rgba(30, 30, 46, 0.9); /* Dark slate background */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 8px;
 }
 
+/* Hover effects for modules */
 #clock:hover,
 #custom-pacman:hover,
-#custom-notification:hover,
 #bluetooth:hover,
 #network:hover,
 #battery:hover,
@@ -50,11 +56,10 @@ tooltip {
 #memory:hover,
 #temperature:hover {
     transition: all 0.3s ease;
-    color: @base0D;
-    /* Accent color */
+    color: #89b4fa; /* Soft Blue (Replaces @base0D) */
 }
 
-#custom-notification,
+/* Base styling for modules */
 #clock,
 #custom-pacman,
 #bluetooth,
@@ -64,58 +69,21 @@ tooltip {
 #memory,
 #temperature {
     padding: 0px 5px;
-    color: @base05;
-    /* Foreground/Text */
+    color: #cdd6f4; /* Off-White/Light Gray (Replaces @base05) */
     transition: all 0.3s ease;
 }
 
-#workspaces {
-    padding: 0px 5px;
-}
-
-#workspaces button {
-    all: unset;
-    padding: 0px 5px;
-    color: alpha(@base0D, 0.4);
-    transition: all 0.2s ease;
-}
-
-#workspaces button:hover {
-    color: rgba(0, 0, 0, 0);
-    border: none;
-    text-shadow: 0px 0px 1.5px rgba(0, 0, 0, 0.5);
-    transition: all 1s ease;
-}
-
-#workspaces button.active {
-    color: @base0D;
-    border: none;
-    text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
-}
-
-#workspaces button.empty {
-    color: rgba(0, 0, 0, 0);
-    border: none;
-    text-shadow: 0px 0px 1.5px rgba(0, 0, 0, 0.2);
-}
-
-#workspaces button.empty.active {
-    color: @base0D;
-}
-
+/* Battery status colors */
 #battery.charging {
-    color: @base0B;
-    /* Green */
+    color: #a6da95; /* Soft Green (Replaces @base0B) */
 }
 
 #battery.warning:not(.charging) {
-    color: @base0A;
-    /* Yellow/Orange */
+    color: #eed49f; /* Muted Yellow (Replaces @base0A) */
 }
 
 #battery.critical:not(.charging) {
-    color: @base08;
-    /* Red */
+    color: #f38ba8; /* Soft Red (Replaces @base08) */
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: linear;
@@ -123,15 +91,29 @@ tooltip {
     animation-direction: alternate;
 }
 
-#custom-expand {
-    padding: 0px 5px;
-    color: alpha(@base05, 0.2);
-    text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.7);
-    transition: all 0.3s ease;
+/* Maintain your existing structure for other elements */
+#workspaces button {
+    all: initial;
+    min-width: 0;
+    padding: 0px 15px;
+    margin: 0px 3px;
+    border-radius: 10px;
+    /* Muted background for inactive workspaces */
+    background-color: rgba(255, 255, 255, 0.05); 
+    color: #6c7086; 
+    transition: all 0.2s ease;
 }
 
-#tray,
-#tray menu * {
-    padding: 0px 5px;
-    transition: all 0.3s ease;
+#workspaces button.active {
+    /* Muted Steel Blue - less saturated and softer on the eyes */
+    background-color: #5e81ac; 
+    /* White text usually works better on this deeper, muted blue */
+    color: #eceff4; 
+    font-weight: bold;
+}
+
+#workspaces button:hover {
+    /* Matching the hover text to the new muted blue */
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #81a1c1; /* A slightly lighter version of the muted blue */
 }

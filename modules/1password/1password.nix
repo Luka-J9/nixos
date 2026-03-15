@@ -1,67 +1,26 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, pkgs, ... }:
 
-{
+with lib;
 
-  config = {
-    home.packages = with pkgs; [
-      _1password-gui
-      _1password-cli
-    ];
-
-    home.file = {
-      ".config/1Password/ssh/agent.toml" = {
-        source = ./agent.toml;
-      };
-    };
-
-    programs.ssh = {
-      enable = true;
-      enableDefaultConfig = false;
-      matchBlocks = {
-        "*" = {
-          forwardAgent = false;
-          serverAliveInterval = 0;
-          serverAliveCountMax = 3;
-          compression = false;
-          addKeysToAgent = "no";
-          hashKnownHosts = false;
-          userKnownHostsFile = "~/.ssh/known_hosts";
-          controlMaster = "no";
-          controlPath = "~/.ssh/master-%r@%n:%p";
-          controlPersist = "no";
-          identityAgent = "${config.home.homeDirectory}/.1password/agent.sock";
-        };
-      };
-    };
-
-    programs.git = {
-      enable = true;
-      settings = {
-        init.defaultBranch = "main";
-        branch.autoSetupRebase = "always";
-        push.autoSetupRemote = true;
-        gpg = {
-          format = "ssh";
-          ssh = {
-            program = "${lib.getExe' pkgs._1password-gui "op-ssh-sign"}";
-          };
-        };
-        commit = {
-          gpgsign = true;
-        };
-
-        user = {
-          email = "development@lukaj9.com";
-          name = "Luka-J9";
-          signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID2WORLWmi4hPbsANjBpP1a9oTHxgG4CeKvwOGwKy+h0";
-        };
-      };
+let
+  cfg = config.my.onepassword;
+in {
+  options.my.onepassword = {
+    enable = mkEnableOption "Enable 1Password CLI and GUI with Polkit";
+    
+    username = mkOption {
+      type = types.str;
+      description = "The username to grant Polkit access for 1Password";
+      default = "luka"; # Fallback default
     };
   };
 
+  config = mkIf cfg.enable {
+    security.polkit.enable = true;
+    programs._1password.enable = true;
+    programs._1password-gui = {
+      enable = true;
+      polkitPolicyOwners = [ cfg.username ];
+    };
+  };
 }

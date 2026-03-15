@@ -49,6 +49,17 @@
             };
           };
           modules = [
+            (
+              { pkgs, pkgs-stable, ... }:
+              {
+                nixpkgs.overlays = [
+                  (final: prev: {
+                    # Force system to use stable versions for these two packages
+                    inherit (pkgs-stable) _1password-cli _1password-gui;
+                  })
+                ];
+              }
+            )
             ./hosts/framework-desktop/configuration.nix
             stylix.nixosModules.stylix
             lanzaboote.nixosModules.lanzaboote
