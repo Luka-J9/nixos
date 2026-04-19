@@ -24,7 +24,7 @@ in
 
   stylix = {
     enable = true;
-    image = ./wallpapers/shorewallpaper-ultrawide.png;
+    image = ./wallpapers/artii-rise.jpg;
     polarity = "dark";
 
     targets.vscode = {
@@ -223,7 +223,10 @@ in
         pseudotile = true;
         force_split = 2;
         preserve_split = true;
-        single_window_aspect_ratio = "5 4";
+      };
+
+      layout ={
+        single_window_aspect_ratio = "6 4";
       };
 
       bindm = [
