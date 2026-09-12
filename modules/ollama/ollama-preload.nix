@@ -21,7 +21,7 @@ in
     };
   };
 
-  config = lib.mkIf (config.home.ollamaPreload != null) (
+  config = lib.mkIf (config.home.ollamaPreload.models != [ ]) (
     let
       modelsToPreload = config.home.ollamaPreload.models;
     in

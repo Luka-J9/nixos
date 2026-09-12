@@ -10,3 +10,7 @@ vault = "Development"
 [[ssh-keys]]
 item = "Git Signing Key"
 vault = "Development"
+
+[[ssh-keys]]
+item = "nixos-anywhere-installer"
+vault = "Homelab"

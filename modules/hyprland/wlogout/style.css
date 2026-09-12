@@ -1,0 +1,33 @@
+* {
+    background-image: none;
+    box-shadow: none;
+}
+
+window {
+    background-color: rgba(40, 42, 54, 0.88);
+}
+
+button {
+    background-color: rgba(68, 71, 90, 0.75);
+    border: 1px solid rgba(189, 147, 249, 0.2);
+    border-radius: 14px;
+    color: #f8f8f2;
+    font-family: "JetBrainsMono Nerd Font Mono";
+    font-size: 15px;
+    margin: 16px;
+    padding: 20px;
+    transition: all 0.2s ease;
+}
+
+button:hover,
+button:focus {
+    background-color: rgba(189, 147, 249, 0.25);
+    border-color: #bd93f9;
+    color: #bd93f9;
+    outline: none;
+}
+
+#shutdown:hover  { border-color: #ff5555; color: #ff5555; background-color: rgba(255, 85, 85, 0.2); }
+#reboot:hover    { border-color: #ffb86c; color: #ffb86c; background-color: rgba(255, 184, 108, 0.2); }
+#suspend:hover   { border-color: #8be9fd; color: #8be9fd; background-color: rgba(139, 233, 253, 0.2); }
+#lock:hover      { border-color: #50fa7b; color: #50fa7b; background-color: rgba(80, 250, 123, 0.2); }

@@ -2,10 +2,9 @@
     "layer": "top",
     "position": "top",
     "reload_style_on_change": true,
+    "spacing": 10,
     "modules-center": [
-        "custom/notification",
         "clock",
-        "custom/pacman",
         "tray"
     ],
     "modules-left": [
@@ -17,42 +16,32 @@
         "pulseaudio#microphone",
         "bluetooth",
         "network",
-        "battery"
+        "custom/power"
     ],
     "hyprland/workspaces": {
+        "all-outputs": false,
+        "on-click": "activate",
         "format": "{icon}",
         "format-icons": {
-            "active": "",
-            "default": "",
-            "empty": ""
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9"
         },
-        "persistent-workspaces": {
-            "*": [
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9
-            ]
-        }
-    },
-    "custom/notification": {
-        "tooltip": false,
-        "format": "",
-        "on-click": "swaync-client -t -sw",
-        "escape": true
+        "persistent-workspaces": {}
     },
     "clock": {
-        "format": "{:%I:%M:%S %p} ",
+        "format": "{:%b %d %I:%M:%S %p} ",
         "interval": 1,
         "tooltip-format": "<tt>{calendar}</tt>",
         "calendar": {
             "format": {
-                "today": "<span color='#fAfBfC'><b>{}</b></span>"
+                "today": "<span color='#74c7ec'><b>{}</b></span>"
             }
         },
         "actions": {
@@ -61,19 +50,18 @@
         }
     },
     "network": {
-        "format-wifi": "",
-        "format-ethernet": "",
-        "format-disconnected": "",
+        "format-wifi": "<span font_size='15pt' rise='0'></span> <span font_size='11pt' rise='2000'>{essid}</span>",
+        "format-ethernet": "<span font_size='15pt' rise='0'></span> <span font_size='11pt' rise='2000'>{ifname}</span>",
+        "format-disconnected": "<span font_size='15pt' rise='0'></span> <span font_size='11pt' rise='2000'>Disconnected</span>",
         "tooltip-format-disconnected": "Error",
         "tooltip-format-wifi": "{essid} ({signalStrength}%) ",
         "tooltip-format-ethernet": "{ifname} 🖧 ",
         "on-click": "ghostty -e nmtui"
     },
     "pulseaudio": {
-        "format": "{icon} <span font_size='11pt' rise='1000'>{volume}%</span>",
-        "format-bluetooth": "{icon} {volume}%",
-        "icon-size": 20,
-        "format-muted": "<span size='large'>  </span> Muted",
+        "format": "<span font_size='15pt' rise='0'>{icon}</span> <span font_size='11pt' rise='2000'>{volume}%</span>",
+        "format-bluetooth": "<span font_size='15pt' rise='0'>{icon}</span> <span font_size='11pt' rise='2000'>{volume}%</span>",
+        "format-muted": "<span font_size='15pt' rise='0'>  </span> <span font_size='11pt' rise='2000'>Muted</span>",
         "format-icons": {
             "headphone": "",
             "hands-free": "",
@@ -87,15 +75,16 @@
             ]
         },
         "scroll-step": 1,
-        "on-click": "pavucontrol"
+        "on-click": "pavucontrol",
+        "max-volume": 100
     },
     "pulseaudio#microphone": {
         "format": "{format_source}",
-        "format-source": "<span size='large' font_weight='bold'></span> <span rise='1000'>{volume}%</span>",
-        "format-source-muted": " Muted",
-        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle",
-        "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 1%+",
-        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 1%-"
+        "format-source": "<span font_size='15pt' rise='0'></span> <span font_size='11pt' rise='2000'>{volume}%</span>",
+        "format-source-muted": "<span font_size='15pt' rise='0'></span> <span font_size='11pt' rise='2000'>Muted</span>",
+        "on-click": "pamixer --default-source -t",
+        "on-scroll-up": "pamixer --default-source -i 1",
+        "on-scroll-down": "pamixer --default-source -d 1"
     },
     "bluetooth": {
         "format-on": "󰂯",
@@ -107,27 +96,7 @@
         "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
         "tooltip-format-enumerate-connected": "{device_alias}\n{device_address}",
         "tooltip-format-enumerate-connected-battery": "{device_alias}\n{device_address}\n{device_battery_percentage}%",
-        "on-click-right": "blueman-manager",
-    },
-    "battery": {
-        "interval": 30,
-        "states": {
-            "good": 95,
-            "warning": 30,
-            "critical": 20
-        },
-        "format": "{capacity}% {icon}",
-        "format-charging": "{capacity}% 󰂄",
-        "format-plugged": "{capacity}% 󰂄 ",
-        "format-alt": "{time} {icon}",
-        "format-icons": [
-            "󰁻",
-            "󰁼",
-            "󰁾",
-            "󰂀",
-            "󰂂",
-            "󰁹"
-        ],
+        "on-click-right": "blueman-manager"
     },
     "custom/expand": {
         "format": "",
@@ -146,20 +115,11 @@
         },
         "modules": [
             "custom/expand",
-            "custom/colorpicker",
             "cpu",
             "memory",
             "temperature",
             "custom/endpoint"
-        ],
-    },
-    "custom/colorpicker": {
-        "format": "{}",
-        "return-type": "json",
-        "interval": "once",
-        "exec": "~/.config/waybar/scripts/colorpicker.sh -j",
-        "on-click": "~/.config/waybar/scripts/colorpicker.sh",
-        "signal": 1
+        ]
     },
     "cpu": {
         "format": "󰻠",
@@ -170,11 +130,16 @@
     },
     "temperature": {
         "critical-threshold": 80,
-        "format": "",
+        "format": ""
     },
     "tray": {
         "icon-size": 14,
         "spacing": 10,
-        "show-passive-items": false,
+        "show-passive-items": true
     },
+    "custom/power": {
+        "format": "⏻",
+        "tooltip": false,
+        "on-click": "power-menu"
+    }
 }

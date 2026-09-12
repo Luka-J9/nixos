@@ -1,0 +1,72 @@
+/* Power menu — 3 horizontal buttons, drops below waybar right group */
+
+configuration {
+    hover-select:    true;
+    me-select-entry: "";
+    me-accept-entry: "MousePrimary";
+}
+
+* {
+    bg:      rgba(40, 42, 54, 96%);
+    bg-btn:  rgba(68, 71, 90, 0.60);
+    bg-sel:  rgba(68, 71, 90, 100%);
+    fg:      #f8f8f2;
+    accent:  #bd93f9;
+    border:  rgba(189, 147, 249, 30%);
+
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+window {
+    background-color: @bg;
+    border:           1px solid;
+    border-color:     @border;
+    border-radius:    12px;
+    width:            320px;
+    location:         northeast;
+    anchor:           northeast;
+    x-offset:         -20;
+    y-offset:         8;
+    padding:          0;
+}
+
+mainbox {
+    background-color: transparent;
+    padding:          8px;
+    spacing:          0;
+}
+
+inputbar {
+    enabled: false;
+}
+
+listview {
+    background-color: transparent;
+    columns:          4;
+    lines:            1;
+    spacing:          6px;
+    scrollbar:        false;
+    fixed-height:     false;
+}
+
+element {
+    background-color: @bg-btn;
+    border-radius:    10px;
+    padding:          16px 12px;
+    orientation:      horizontal;
+    spacing:          0;
+}
+
+element selected.normal {
+    background-color: @bg-sel;
+    text-color:       @accent;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    horizontal-align: 0.5;
+    vertical-align:   0.5;
+    font:             "JetBrainsMono Nerd Font Mono 20";
+}
