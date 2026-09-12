@@ -64,36 +64,39 @@ in
     };
   };
 
-  # Bootloader.
-  boot.loader.systemd-boot.enable = lib.mkForce false;
-  boot.loader.efi.canTouchEfiVariables = true;
-
-  boot.lanzaboote = {
-    enable = true;
-    pkiBundle = "/var/lib/sbctl";
-    autoGenerateKeys.enable = true;
-    autoEnrollKeys = {
-      enable = true;
-      autoReboot = true;
-    };
-  };
-
-  # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-
+  # Unified Boot Configuration
   boot = {
+    # Lanzaboote & UEFI setup
+    loader = {
+      systemd-boot.enable = lib.mkForce false;
+      efi.canTouchEfiVariables = true;
+      timeout = 3;
+    };
+
+    lanzaboote = {
+      enable = true;
+      pkiBundle = "/var/lib/sbctl";
+      autoGenerateKeys.enable = true;
+      autoEnrollKeys = {
+        enable = true;
+        autoReboot = true;
+      };
+    };
+
+    # Kernel choices
+    kernelPackages = pkgs.linuxPackages_latest;
+
+    # Silent boot and Plymouth theme
     plymouth = {
       enable = true;
       theme = "rings";
       themePackages = with pkgs; [
-        # By default we would install all themes
         (adi1090x-plymouth-themes.override {
           selected_themes = [ "rings" ];
         })
       ];
     };
 
-    # Enable "Silent boot"
     consoleLogLevel = 3;
     initrd.verbose = false;
     kernelParams = [
@@ -103,13 +106,11 @@ in
       "udev.log_priority=3"
       "rd.systemd.show_status=auto"
     ];
-    loader.timeout = 3;
   };
 
   hardware.bluetooth.enable = true;
   networking.hostName = "framework-desktop"; # Define your hostname.
   networking.networkmanager.wifi.backend = "iwd"; # TPM support somehow breaks this
-  networking.wireless.iwd.enable = true;
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Enable networking
@@ -133,11 +134,6 @@ in
     LC_TIME = "en_US.UTF-8";
   };
 
-  programs.hyprland = {
-    enable = true;
-    withUWSM = true;
-  };
-
   services.getty.autologinUser = "${mainUser}";
 
   programs.bash.loginShellInit = ''
@@ -149,7 +145,8 @@ in
   security.pam.services.login.enableGnomeKeyring = true;
   security.pam.services.hyprlock.enableGnomeKeyring = true;
   services.gnome.gnome-keyring.enable = true;
-  services.gnome.gcr-ssh-agent.enable = true; # Enable the new 2026 SSH agent
+  services.gnome.gcr-ssh-agent.enable = true; # Enable the new SSH agent
+  services.gvfs.enable = true;
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
@@ -158,22 +155,12 @@ in
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
-  security.rtkit.enable = true;
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
   environment.systemPackages = with pkgs; [
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
     lon
     sbctl
-    metals # TODO: move to correct location
   ];
 
   nix.settings.experimental-features = [
@@ -184,12 +171,6 @@ in
     "root"
     "luka"
   ];
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.05"; # Did you read the comment?
 
+  system.stateVersion = "25.05";
 }

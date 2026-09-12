@@ -8,11 +8,6 @@
 {
 
   config = {
-    home.packages = with pkgs; [
-      _1password-gui
-      _1password-cli
-    ];
-
     home.file = {
       ".config/1Password/ssh/agent.toml" = {
         source = ./agent.toml;
@@ -21,8 +16,7 @@
 
     programs.ssh = {
       enable = true;
-      enableDefaultConfig = false;
-      matchBlocks = {
+      settings = {
         "*" = {
           forwardAgent = false;
           serverAliveInterval = 0;

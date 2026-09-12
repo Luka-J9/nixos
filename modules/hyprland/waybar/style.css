@@ -51,7 +51,6 @@ window#waybar {
 #custom-pacman:hover,
 #bluetooth:hover,
 #network:hover,
-#battery:hover,
 #cpu:hover,
 #memory:hover,
 #temperature:hover {
@@ -64,7 +63,6 @@ window#waybar {
 #custom-pacman,
 #bluetooth,
 #network,
-#battery,
 #cpu,
 #memory,
 #temperature {
@@ -73,22 +71,15 @@ window#waybar {
     transition: all 0.3s ease;
 }
 
-/* Battery status colors */
-#battery.charging {
-    color: #a6da95; /* Soft Green (Replaces @base0B) */
+#custom-power {
+    padding: 0px 10px;
+    color: #cdd6f4;
+    font-size: 16px;
+    transition: all 0.3s ease;
 }
 
-#battery.warning:not(.charging) {
-    color: #eed49f; /* Muted Yellow (Replaces @base0A) */
-}
-
-#battery.critical:not(.charging) {
-    color: #f38ba8; /* Soft Red (Replaces @base08) */
-    animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
+#custom-power:hover {
+    color: #89b4fa;
 }
 
 /* Maintain your existing structure for other elements */

@@ -8,19 +8,53 @@
 let
   toggle-mic = pkgs.writeShellApplication {
     name = "toggle-mic";
-    runtimeInputs = [
-      pkgs.pamixer
-    ]; # Provides wpctl and hyprctl
+    runtimeInputs = [ pkgs.pamixer ];
     text = builtins.readFile ./scripts/toggle-mic.sh;
+  };
+
+  power-menu = pkgs.writeShellApplication {
+    name = "power-menu";
+    runtimeInputs = [ pkgs.rofi ];
+    text = ''
+      entries="󰌾\n󰤄\n󰑓\n⏻"
+      chosen=$(printf '%b' "$entries" | rofi -dmenu -p "" -no-custom \
+        -theme "${./rofi/power-menu.rasi}")
+      case "$chosen" in
+        "󰌾") hyprlock ;;
+        "󰤄") systemctl suspend ;;
+        "󰑓") systemctl reboot ;;
+        "⏻") systemctl poweroff ;;
+      esac
+    '';
+  };
+
+  keybind-hint = pkgs.writeShellApplication {
+    name = "keybind-hint";
+    runtimeInputs = [ pkgs.jq pkgs.hyprland ];
+    text = ''
+      hyprctl binds -j | jq -r '
+        def bit(m; n): (m / n | floor) % 2;
+        def dsp(d): d | ltrimstr("HL.Dispatcher(") | rtrimstr(")");
+        .[] | select(.submap == "" and .has_description == true) |
+        . as $bind |
+        [
+          if bit($bind.modmask; 64) == 1 then "SUPER" else empty end,
+          if bit($bind.modmask;  1) == 1 then "SHIFT" else empty end,
+          if bit($bind.modmask;  4) == 1 then "CTRL"  else empty end,
+          if bit($bind.modmask;  8) == 1 then "ALT"   else empty end,
+          $bind.key
+        ] | join("+") as $binding |
+        "\($binding)\t\($bind.description)"
+      ' | awk -F'\t' '{printf "%-28s %s\n", $1, $2}' \
+        | rofi -dmenu -i -p " Keybinds" -no-custom \
+               -theme-str 'window { width: 55%; } listview { lines: 30; }'
+    '';
   };
 in
 {
   imports = [
     inputs.stylix.homeModules.stylix
   ];
-
-  # Enable the service properly (replaces manual exec-once)
-  services.gnome-keyring.enable = true;
 
   stylix = {
     enable = true;
@@ -34,6 +68,9 @@ in
       enable = false;
     };
     targets.zed = {
+      enable = false;
+    };
+    targets.ghostty = {
       enable = false;
     };
 
@@ -73,39 +110,42 @@ in
     targets.hyprland.enable = true;
     targets.hyprland.hyprpaper.enable = true;
     targets.waybar.enable = true;
-    targets.rofi.enable = true;
+    targets.rofi.enable = false;
   };
 
-  programs.rofi.enable = true;
-  programs.hyprshot.enable = true;
+  programs.rofi = {
+    enable = true;
+    theme = ./rofi/theme.rasi;
+    font = "JetBrainsMono Nerd Font Mono 12";
+    terminal = "ghostty";
+  };
   programs.waybar.enable = true;
-  services.swaync.enable = false;
-
   services.mako = {
     enable = true;
+    settings = {
+      # Appearance
+      font = lib.mkForce "JetBrainsMono Nerd Font 10";
+      # background-color = "#1e1e2ecc";
+      # text-color = "#cdd6f4";
+      # border-color = "#89b4fa";
+      border-size = 0;
+      border-radius = 12;
+      padding = "12";
+      margin = "10,20";
+      width = 320;
+      height = 100;
+      max-icon-size = 48;
+      markup = true;
+      actions = true;
 
-    # Appearance
-    font = lib.mkForce "JetBrainsMono Nerd Font 10";
-    # backgroundColor = "#1e1e2ecc";
-    # textColor = "#cdd6f4";
-    # borderColor = "#89b4fa";
-    borderSize = 0;
-    borderRadius = 12;
-    padding = "12";
-    margin = "10,20";
-    width = 320;
-    height = 100;
-    maxIconSize = 48;
-    markup = true;
-    actions = true;
-
-    # Behavior
-    defaultTimeout = 4000;
-    ignoreTimeout = false;
-    groupBy = "app-name";
-    maxVisible = 4;
-    layer = "overlay";
-    anchor = "top-right";
+      # Behavior
+      default-timeout = 4000;
+      ignore-timeout = false;
+      group-by = "app-name";
+      max-visible = 4;
+      layer = "overlay";
+      anchor = "top-right";
+    };
   };
 
   services.hyprpaper.enable = true;
@@ -116,153 +156,143 @@ in
       source = ./waybar;
       recursive = true;
     };
+
   };
 
   home.packages = with pkgs; [
-    pipewire
     pamixer
     toggle-mic
+    keybind-hint
     pavucontrol # audiocontrol
     material-symbols
     font-awesome # For the Font Awesome glyphs
     nerd-fonts.symbols-only # The "Master" icon font for 2026
     nerd-fonts.jetbrains-mono
-    nerd-fonts.symbols-only
     blueman
     libappindicator-gtk3 # Required for modern tray icon support
+    nautilus
+    nautilus-open-any-terminal
+    power-menu
+    grimblast
+    satty
   ];
 
   wayland.windowManager.hyprland = {
     enable = true;
+    configType = "lua";
     systemd.enable = false;
-    settings = {
-      "$mainMod" = "SUPER";
-      "$terminal" = "ghostty";
-      "$filemanager" = "thunar";
-      "$browser" = "chromium";
-      "$code" = "code";
-      "$menu" = "rofi -show drun";
+    extraConfig = ''
+      local mainMod = "SUPER"
+      local terminal = "ghostty"
+      local filemanager = "nautilus"
+      local browser = "chromium"
+      local code = "code"
+      local menu = "rofi -show drun"
 
-      exec-once = [
-        "uwsm finalize SSH_AUTH_SOCK"
-        "hyprlock && uwsm app -- signal-desktop --start-in-tray --password-store=\"gnome-libsecret\""
-        "uwsm app -- waybar"
-        "uwsm app -- 1password --silent"
-        "uwsm app -- discord --start-minimized"
-        "exec wpctl status > /dev/null && wpctl inspect @DEFAULT_SOURCE@ > /dev/null"
-      ];
+      hl.animation({ leaf = "windows",    enabled = true, speed = 5, bezier = "default" })
+      hl.animation({ leaf = "fade",       enabled = true, speed = 5, bezier = "default" })
+      hl.animation({ leaf = "workspaces", enabled = true, speed = 5, bezier = "default" })
 
-      env = [
-        "ELECTRON_OZONE_PLATFORM_HINT,auto"
-      ];
+      hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
 
-      misc = {
-        # Allows SwayNC to focus the window when a notification is clicked
-        focus_on_activate = true;
-      };
+      hl.monitor({ output = "HDMI-A-1", mode = "preferred", position = "auto", scale = "1" })
 
-      bind = [
-        "$mainMod, Return, exec, $terminal"
-        "$mainMod, e, exec, $filemanager"
-        "$mainMod, b, exec, $browser"
-        "$mainMod, v, exec, $code"
-        "$mainMod, o, exec, $menu"
-        "$mainMod, q, killactive"
-        "$mainMod, f, togglefloating"
-        "$mainMod, m, fullscreen, 1"
-        "$mainMod, s, togglefloating"
-        "$mainMod, t, fullscreen, 0"
-        
-        "$mainMod, 1, workspace, 1"
-        "$mainMod, 2, workspace, 2"
-        "$mainMod, 3, workspace, 3"
-        "$mainMod, 4, workspace, 4"
-        "$mainMod, 5, workspace, 5"
-        "$mainMod, 6, workspace, 6"
-        "$mainMod, 7, workspace, 7"
-        "$mainMod, 8, workspace, 8"
-        "$mainMod, 9, workspace, 9"
+      hl.on("hyprland.start", function()
+          hl.exec_cmd("uwsm finalize SSH_AUTH_SOCK")
+          hl.exec_cmd("hyprlock && uwsm app -- signal-desktop --start-in-tray --password-store=\"gnome-libsecret\"")
+          hl.exec_cmd("uwsm app -- waybar")
+          hl.exec_cmd("uwsm app -- 1password --silent")
+          hl.exec_cmd("uwsm app -- discord --start-minimized")
+          hl.exec_cmd("wpctl status > /dev/null && wpctl inspect @DEFAULT_SOURCE@ > /dev/null")
+      end)
 
-        "$mainMod SHIFT, 1, movetoworkspace, 1"
-        "$mainMod SHIFT, 2, movetoworkspace, 2"
-        "$mainMod SHIFT, 3, movetoworkspace, 3"
-        "$mainMod SHIFT, 4, movetoworkspace, 4"
-        "$mainMod SHIFT, 5, movetoworkspace, 5"
-        "$mainMod SHIFT, 6, movetoworkspace, 6"
-        "$mainMod SHIFT, 7, movetoworkspace, 7"
-        "$mainMod SHIFT, 8, movetoworkspace, 8"
-        "$mainMod SHIFT, 9, movetoworkspace, 9"
+      -- Apps
+      hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal),    { description = "Launch terminal" })
+      hl.bind(mainMod .. " + e",      hl.dsp.exec_cmd(filemanager), { description = "Open file manager" })
+      hl.bind(mainMod .. " + b",      hl.dsp.exec_cmd(browser),     { description = "Open browser" })
+      hl.bind(mainMod .. " + v",      hl.dsp.exec_cmd(code),        { description = "Open VS Code" })
+      hl.bind(mainMod .. " + o",      hl.dsp.exec_cmd(menu),        { description = "App launcher" })
 
-        "$mainMod, XF86KbdBrightnessDown, exec, ${pkgs.hyprshot}/bin/hyprshot -m window" # F5
-        "$mainMod, XF86LaunchB, exec, ${pkgs.hyprshot}/bin/hyprshot -m region" # F4
-        "$mainMod, Tab, cyclenext,"
-        "$mainMod, left, movefocus, l"
-        "$mainMod, right, movefocus, r"
-        "$mainMod, up, movefocus, u"
-        "$mainMod, down, movefocus, d"
-        "$mainMod SHIFT, left, movewindow, l"
-        "$mainMod SHIFT, right, movewindow, r"
-        "$mainMod SHIFT, up, movewindow, u"
-        "$mainMod SHIFT, down, movewindow, d"
-        "$mainMod CTRL, down, exec, hyprctl dispatch layoutmsg togglesplit ; hyprctl dispatch swapwindow d"
-        "$mainMod CTRL, up, exec, hyprctl dispatch layoutmsg togglesplit ; hyprctl dispatch swapwindow u"
+      -- Window management
+      hl.bind(mainMod .. " + q",   hl.dsp.window.close(),                                         { description = "Close window" })
+      hl.bind(mainMod .. " + f",   hl.dsp.window.float({ action = "toggle" }),                    { description = "Toggle float" })
+      hl.bind(mainMod .. " + s",   hl.dsp.window.float({ action = "toggle" }),                    { description = "Toggle float" })
+      hl.bind(mainMod .. " + m",   hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }),  { description = "Toggle maximize" })
+      hl.bind(mainMod .. " + t",   hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" }), { description = "Toggle fullscreen" })
+      hl.bind(mainMod .. " + J",   hl.dsp.layout("togglesplit"),                                  { description = "Toggle split direction" })
+      hl.bind(mainMod .. " + Tab", hl.dsp.window.cycle_next({ next = true }),                     { description = "Cycle next window" })
 
-        "$mainMod, P, pseudo"
-        "$mainMod, J, layoutmsg, togglesplit"
-        "$mainMod, L, exec, hyprlock"
-        ",XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-        "$mainMod, Delete, exec, ${toggle-mic}/bin/toggle-mic"
-      ];
+      -- Focus
+      hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }),  { description = "Focus left" })
+      hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }), { description = "Focus right" })
+      hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }),    { description = "Focus up" })
+      hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }),  { description = "Focus down" })
 
-      binde = [
-        ",XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+"
-        ",XF86AudioLowerVolume, exec, wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-"
-      ];
+      -- Move windows
+      hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.window.move({ direction = "l" }), { description = "Move window left" })
+      hl.bind(mainMod .. " + SHIFT + right", hl.dsp.window.move({ direction = "r" }), { description = "Move window right" })
+      hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.window.move({ direction = "u" }), { description = "Move window up" })
+      hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.window.move({ direction = "d" }), { description = "Move window down" })
 
-      dwindle = {
-        pseudotile = true;
-        force_split = 2;
-        preserve_split = true;
-      };
+      -- Layout swap
+      hl.bind(mainMod .. " + CTRL + down", hl.dsp.exec_cmd("hyprctl dispatch layoutmsg togglesplit ; hyprctl dispatch swapwindow d"), { description = "Swap split down" })
+      hl.bind(mainMod .. " + CTRL + up",   hl.dsp.exec_cmd("hyprctl dispatch layoutmsg togglesplit ; hyprctl dispatch swapwindow u"), { description = "Swap split up" })
 
-      layout ={
-        single_window_aspect_ratio = "6 4";
-      };
+      -- Workspaces
+      hl.bind(mainMod .. " + 1", hl.dsp.focus({ workspace = 1 }), { description = "Go to workspace 1" })
+      hl.bind(mainMod .. " + 2", hl.dsp.focus({ workspace = 2 }), { description = "Go to workspace 2" })
+      hl.bind(mainMod .. " + 3", hl.dsp.focus({ workspace = 3 }), { description = "Go to workspace 3" })
+      hl.bind(mainMod .. " + 4", hl.dsp.focus({ workspace = 4 }), { description = "Go to workspace 4" })
+      hl.bind(mainMod .. " + 5", hl.dsp.focus({ workspace = 5 }), { description = "Go to workspace 5" })
+      hl.bind(mainMod .. " + 6", hl.dsp.focus({ workspace = 6 }), { description = "Go to workspace 6" })
+      hl.bind(mainMod .. " + 7", hl.dsp.focus({ workspace = 7 }), { description = "Go to workspace 7" })
+      hl.bind(mainMod .. " + 8", hl.dsp.focus({ workspace = 8 }), { description = "Go to workspace 8" })
+      hl.bind(mainMod .. " + 9", hl.dsp.focus({ workspace = 9 }), { description = "Go to workspace 9" })
 
-      bindm = [
-        "$mainMod, mouse:272, movewindow"
-        "$mainMod, mouse:273, resizewindow"
-      ];
+      hl.bind(mainMod .. " + SHIFT + 1", hl.dsp.window.move({ workspace = 1 }), { description = "Move window to workspace 1" })
+      hl.bind(mainMod .. " + SHIFT + 2", hl.dsp.window.move({ workspace = 2 }), { description = "Move window to workspace 2" })
+      hl.bind(mainMod .. " + SHIFT + 3", hl.dsp.window.move({ workspace = 3 }), { description = "Move window to workspace 3" })
+      hl.bind(mainMod .. " + SHIFT + 4", hl.dsp.window.move({ workspace = 4 }), { description = "Move window to workspace 4" })
+      hl.bind(mainMod .. " + SHIFT + 5", hl.dsp.window.move({ workspace = 5 }), { description = "Move window to workspace 5" })
+      hl.bind(mainMod .. " + SHIFT + 6", hl.dsp.window.move({ workspace = 6 }), { description = "Move window to workspace 6" })
+      hl.bind(mainMod .. " + SHIFT + 7", hl.dsp.window.move({ workspace = 7 }), { description = "Move window to workspace 7" })
+      hl.bind(mainMod .. " + SHIFT + 8", hl.dsp.window.move({ workspace = 8 }), { description = "Move window to workspace 8" })
+      hl.bind(mainMod .. " + SHIFT + 9", hl.dsp.window.move({ workspace = 9 }), { description = "Move window to workspace 9" })
 
-      windowrule = [
-        "tag +game, match:initial_class ^(steam_app_\\d+)$"
-        "fullscreen 1, match:tag game"
-        "immediate on, match:tag game"
-        "workspace 9, match:tag game"
-      ];
+      -- Screenshots
+      hl.bind(mainMod .. " + p",         hl.dsp.exec_cmd("grimblast --notify copy area"),        { description = "Screenshot region → clipboard" })
+      hl.bind(mainMod .. " + SHIFT + p", hl.dsp.exec_cmd("grimblast save area - | satty -f -"), { description = "Screenshot region → annotate" })
 
-      decoration = {
-        rounding = 10;
-        blur = {
-          enabled = true;
-          size = 5;
-          passes = 3;
-        };
-      };
+      -- System
+      hl.bind(mainMod .. " + L",          hl.dsp.exec_cmd("hyprlock"),                              { description = "Lock screen" })
+      hl.bind(mainMod .. " + SHIFT + q",  hl.dsp.exec_cmd("${power-menu}/bin/power-menu"),                          { description = "Power menu", locked = true })
+      hl.bind(mainMod .. " + Delete",     hl.dsp.exec_cmd("${toggle-mic}/bin/toggle-mic"),           { description = "Toggle microphone mute" })
+      hl.bind(mainMod .. " + slash",      hl.dsp.exec_cmd("${keybind-hint}/bin/keybind-hint"),       { description = "Show keybind hints" })
+      hl.bind("XF86AudioMute",            hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { description = "Toggle audio mute" })
 
-      animations = {
-        enabled = true;
-        animation = [
-          "windows, 1, 5, default"
-          "fade, 1, 5, default"
-          "workspaces, 1, 5, default"
-        ];
-      };
+      -- Volume (repeat)
+      hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+"), { repeating = true, description = "Volume up" })
+      hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-"), { repeating = true, description = "Volume down" })
 
-      monitor = [
-        "HDMI-A-1,preferred,auto,1"
-      ];
-    };
+      -- Mouse
+      hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag())
+      hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize())
+
+      -- Game window rules
+      hl.window_rule({ match = { initial_class = "^(steam_app_\\d+)$" }, tag = "+game" })
+      hl.window_rule({ match = { tag = "game" }, fullscreen = 1, immediate = true, workspace = "9" })
+
+      hl.config({
+          animations = { enabled = true },
+          decoration = {
+              rounding = 10,
+              blur = { enabled = true, size = 5, passes = 3 },
+          },
+          dwindle = { force_split = 2, preserve_split = true },
+          layout  = { single_window_aspect_ratio = "6 4" },
+          misc    = { focus_on_activate = true },
+      })
+    '';
   };
 
   programs.hyprlock = {
@@ -280,13 +310,8 @@ in
         vibrancy_darkness = 0.0;
       };
 
-      # GENERAL
       general = {
-        no_fade_in = false;
-        no_fade_out = false;
-        hide_cursor = true;
-        grace = 0;
-        disable_loading_bar = true;
+        hide_cursor = false;
       };
 
       # Profile-Photo
@@ -343,6 +368,40 @@ in
           halign = "center";
           valign = "center";
         }
+        # Power icons — bottom-right corner, clickable
+        {
+          monitor = "";
+          text = "⏻";
+          color = "rgba(255, 85, 85, 0.80)";
+          font_size = 22;
+          font_family = "JetBrainsMono Nerd Font Mono";
+          position = "-20, 30";
+          halign = "right";
+          valign = "bottom";
+          onclick = "systemctl poweroff";
+        }
+        {
+          monitor = "";
+          text = "󰑓";
+          color = "rgba(255, 184, 108, 0.80)";
+          font_size = 22;
+          font_family = "JetBrainsMono Nerd Font Mono";
+          position = "-65, 30";
+          halign = "right";
+          valign = "bottom";
+          onclick = "systemctl reboot";
+        }
+        {
+          monitor = "";
+          text = "󰤄";
+          color = "rgba(139, 233, 253, 0.80)";
+          font_size = 22;
+          font_family = "JetBrainsMono Nerd Font Mono";
+          position = "-110, 30";
+          halign = "right";
+          valign = "bottom";
+          onclick = "systemctl suspend";
+        }
       ];
 
       # INPUT FIELD
@@ -355,7 +414,6 @@ in
         dots_center = true;
         rounding = 25;
         inner_color = lib.mkForce "rgba(255, 255, 255, 0.05)";
-        font_size = 8;
         font_family = "SF Pro Display Bold";
         placeholder_text = "<i><span foreground=\"##ffffff99\">Enter Password...</span></i>";
         hide_input = false;

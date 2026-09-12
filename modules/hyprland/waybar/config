@@ -4,9 +4,7 @@
     "reload_style_on_change": true,
     "spacing": 10,
     "modules-center": [
-        "custom/notification",
         "clock",
-        "custom/pacman",
         "tray"
     ],
     "modules-left": [
@@ -18,7 +16,7 @@
         "pulseaudio#microphone",
         "bluetooth",
         "network",
-        "battery"
+        "custom/power"
     ],
     "hyprland/workspaces": {
         "all-outputs": false,
@@ -98,27 +96,7 @@
         "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
         "tooltip-format-enumerate-connected": "{device_alias}\n{device_address}",
         "tooltip-format-enumerate-connected-battery": "{device_alias}\n{device_address}\n{device_battery_percentage}%",
-        "on-click-right": "blueman-manager",
-    },
-    "battery": {
-        "interval": 30,
-        "states": {
-            "good": 95,
-            "warning": 30,
-            "critical": 20
-        },
-        "format": "{capacity}% {icon}",
-        "format-charging": "{capacity}% 󰂄",
-        "format-plugged": "{capacity}% 󰂄 ",
-        "format-alt": "{time} {icon}",
-        "format-icons": [
-            "󰁻",
-            "󰁼",
-            "󰁾",
-            "󰂀",
-            "󰂂",
-            "󰁹"
-        ],
+        "on-click-right": "blueman-manager"
     },
     "custom/expand": {
         "format": "",
@@ -137,12 +115,11 @@
         },
         "modules": [
             "custom/expand",
-            "custom/colorpicker",
             "cpu",
             "memory",
             "temperature",
             "custom/endpoint"
-        ],
+        ]
     },
     "cpu": {
         "format": "󰻠",
@@ -153,11 +130,16 @@
     },
     "temperature": {
         "critical-threshold": 80,
-        "format": "",
+        "format": ""
     },
     "tray": {
         "icon-size": 14,
         "spacing": 10,
-        "show-passive-items": false,
+        "show-passive-items": true
     },
+    "custom/power": {
+        "format": "⏻",
+        "tooltip": false,
+        "on-click": "power-menu"
+    }
 }

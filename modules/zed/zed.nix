@@ -7,7 +7,6 @@
 {
   config = {
     home.packages = with pkgs; [
-      zed-editor
       nil
     ];
     programs.zed-editor = {

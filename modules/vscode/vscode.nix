@@ -8,7 +8,6 @@
   config = {
 
     home.packages = with pkgs; [
-      git
       nixd
       scala
       scalafmt
@@ -30,6 +29,7 @@
       jq
     ];
     programs.vscode = {
+       package = pkgs.vscode-fhs; 
       enable = true;
       profiles.default.extensions = with pkgs.vscode-extensions; [
         bazelbuild.vscode-bazel

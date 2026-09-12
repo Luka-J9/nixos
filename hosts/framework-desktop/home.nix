@@ -16,7 +16,6 @@
     ../../modules/discord/discord.nix
     ../../modules/ghostty/ghostty.nix
     ../../modules/ollama/ollama-home.nix
-    ../../modules/ollama/ollama-preload.nix
     ../../modules/hyprland/hyprland-home.nix
     ../../modules/obsidian/obsidian.nix
     ../../modules/zed/zed.nix
@@ -33,12 +32,5 @@
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
-
-  home.ollamaPreload.models = [
-    "llama3.2:1b"
-    "qwen3-coder:latest"
-    "deepseek-r1:latest"
-    "mistral-7b-chat"
-  ];
 
 }

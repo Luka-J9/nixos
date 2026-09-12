@@ -1,0 +1,107 @@
+/* Dracula-inspired rofi theme */
+
+* {
+    bg:      rgba(40, 42, 54, 92%);
+    bg-alt:  rgba(68, 71, 90, 80%);
+    bg-sel:  rgba(68, 71, 90, 100%);
+    fg:      #f8f8f2;
+    fg-dim:  #6272a4;
+    accent:  #bd93f9;
+    border:  rgba(189, 147, 249, 30%);
+
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+window {
+    background-color: @bg;
+    border:           1px solid;
+    border-color:     @border;
+    border-radius:    14px;
+    width:            620px;
+    padding:          0;
+}
+
+mainbox {
+    background-color: transparent;
+    padding:          16px;
+    spacing:          10px;
+}
+
+inputbar {
+    background-color: @bg-alt;
+    border-radius:    10px;
+    padding:          10px 14px;
+    spacing:          8px;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    text-color:  @accent;
+    font:        "JetBrainsMono Nerd Font Mono 13";
+    padding:     0 4px 0 0;
+}
+
+entry {
+    text-color:        @fg;
+    font:              "JetBrainsMono Nerd Font Mono 12";
+    placeholder:       "Search...";
+    placeholder-color: @fg-dim;
+}
+
+listview {
+    background-color: transparent;
+    columns:          1;
+    lines:            10;
+    spacing:          3px;
+    scrollbar:        false;
+    fixed-height:     false;
+    padding:          4px 0 0 0;
+}
+
+element {
+    background-color: transparent;
+    border-radius:    8px;
+    padding:          9px 12px;
+    spacing:          10px;
+    orientation:      horizontal;
+}
+
+element normal.normal {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+element selected.normal {
+    background-color: @bg-sel;
+    text-color:       @accent;
+}
+
+element alternate.normal {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+element-icon {
+    background-color: transparent;
+    size:             1.3em;
+    vertical-align:   0.5;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    vertical-align:   0.5;
+    font:             "JetBrainsMono Nerd Font Mono 12";
+}
+
+message {
+    background-color: @bg-alt;
+    border-radius:    8px;
+    padding:          8px 12px;
+}
+
+textbox {
+    text-color: @fg-dim;
+    font:       "JetBrainsMono Nerd Font Mono 11";
+}
