@@ -50,6 +50,17 @@ let
                -theme-str 'window { width: 55%; } listview { lines: 30; }'
     '';
   };
+
+  # Hyprland >=0.56 dropped the "id" field from the `workspaces` IPC reply, which
+  # Waybar 0.15.0's hyprland/workspaces module still relies on to recognize a
+  # newly created workspace (see Alexays/Waybar#5316): the id always parses as 0,
+  # so a workspace created after Waybar starts never matches and never gets a
+  # button. This backports the relevant bit of the (as-yet unmerged) upstream fix
+  # in Alexays/Waybar#5324 - fall back to matching by name, same as Waybar's own
+  # workspace-dedup logic already does elsewhere in that file.
+  waybar-fixed = pkgs.waybar.overrideAttrs (oldAttrs: {
+    patches = (oldAttrs.patches or [ ]) ++ [ ./patches/waybar-workspace-created-name-fallback.patch ];
+  });
 in
 {
   imports = [
@@ -119,7 +130,14 @@ in
     font = "JetBrainsMono Nerd Font Mono 12";
     terminal = "ghostty";
   };
-  programs.waybar.enable = true;
+  programs.waybar = {
+    enable = true;
+    package = waybar-fixed;
+    # Run waybar as a systemd user service so it gets restarted (not left
+    # running as a stale, desynced process) on every home-manager switch,
+    # instead of only ever being launched once via exec-once at login.
+    systemd.enable = true;
+  };
   services.mako = {
     enable = true;
     settings = {
@@ -200,7 +218,6 @@ in
       hl.on("hyprland.start", function()
           hl.exec_cmd("uwsm finalize SSH_AUTH_SOCK")
           hl.exec_cmd("hyprlock && uwsm app -- signal-desktop --start-in-tray --password-store=\"gnome-libsecret\"")
-          hl.exec_cmd("uwsm app -- waybar")
           hl.exec_cmd("uwsm app -- 1password --silent")
           hl.exec_cmd("uwsm app -- discord --start-minimized")
           hl.exec_cmd("wpctl status > /dev/null && wpctl inspect @DEFAULT_SOURCE@ > /dev/null")

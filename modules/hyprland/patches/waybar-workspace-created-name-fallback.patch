@@ -1,0 +1,40 @@
+--- a/src/modules/hyprland/workspaces.cpp
++++ b/src/modules/hyprland/workspaces.cpp
+@@ -383,7 +383,7 @@
+ void Workspaces::onWorkspaceCreated(std::string const& payload, Json::Value const& clientsData) {
+   spdlog::debug("Workspace created: {}", payload);
+ 
+-  const auto [workspaceIdStr, _] = splitDoublePayload(payload);
++  const auto [workspaceIdStr, workspaceNameHint] = splitDoublePayload(payload);
+ 
+   const auto workspaceId = parseWorkspaceId(workspaceIdStr);
+   if (!workspaceId.has_value()) {
+@@ -395,7 +395,14 @@
+ 
+   for (Json::Value workspaceJson : workspacesJson) {
+     const auto currentId = workspaceJson["id"].asInt();
+-    if (currentId == *workspaceId) {
++    // Hyprland's `workspaces` IPC reply stopped including "id" (dropped in 0.56), so it
++    // always parses as 0 here. Fall back to matching by name in that case, the same way
++    // Workspaces::createWorkspace already does above for the same reason - otherwise a
++    // freshly created workspace never matches and its button never gets created.
++    const bool matchesCreatedWorkspace =
++        currentId > 0 ? currentId == *workspaceId
++                      : workspaceJson["name"].asString() == workspaceNameHint;
++    if (matchesCreatedWorkspace) {
+       std::string workspaceName = workspaceJson["name"].asString();
+       // This workspace name is more up-to-date than the one in the event payload.
+       if (isWorkspaceIgnored(workspaceName)) {
+@@ -854,7 +861,11 @@
+   }
+ 
+   const auto workspace = std::ranges::find_if(m_workspaces, [&](std::unique_ptr<Workspace>& x) {
+-    if (workspaceId.has_value()) {
++    // Same "id" fallback as Workspaces::onWorkspaceCreated above: with the "id" field gone
++    // from Hyprland's IPC, every Workspace's stored id() is 0, so an id-based match would
++    // never fire (and a destroyed workspace's button would never get removed). Only trust
++    // the id match when this Workspace actually has a real (nonzero) id.
++    if (workspaceId.has_value() && x->id() > 0) {
+       return *workspaceId == x->id();
+     }
+     return name == x->name();

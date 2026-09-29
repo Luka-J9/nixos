@@ -113,6 +113,14 @@ in
   networking.networkmanager.wifi.backend = "iwd"; # TPM support somehow breaks this
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
+  # iwd sometimes starts before udev finishes registering wlan0 (mt7925e), leaving
+  # the radio powered but with no station device, so NetworkManager sees wifi stuck
+  # as "unavailable" until iwd is restarted. Wait for the netdev before starting iwd.
+  systemd.services.iwd = {
+    after = [ "sys-subsystem-net-devices-wlan0.device" ];
+    wants = [ "sys-subsystem-net-devices-wlan0.device" ];
+  };
+
   # Enable networking
   networking.networkmanager.enable = true;
 
