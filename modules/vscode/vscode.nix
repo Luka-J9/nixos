@@ -18,6 +18,7 @@
       graalvmPackages.graalvm-ce
       metals
       bloop
+      claude-code
 
       direnv
       devenv

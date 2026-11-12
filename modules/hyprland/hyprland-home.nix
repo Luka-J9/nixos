@@ -12,6 +12,24 @@ let
     text = builtins.readFile ./scripts/toggle-mic.sh;
   };
 
+  # Autologin means PAM never sees a password at boot, so the login keyring
+  # stays locked until hyprlock's pam_gnome_keyring unlocks it. Apps that ask
+  # for a secret before then pop a separate keyring prompt behind the lock
+  # screen. Hold them until the keyring is open -- keyed on the keyring itself
+  # rather than `hyprlock &&`, so a hyprlock crash doesn't strand them.
+  after-keyring-unlock = pkgs.writeShellApplication {
+    name = "after-keyring-unlock";
+    runtimeInputs = [ pkgs.systemd ];
+    text = ''
+      until [ "$(busctl --user get-property org.freedesktop.secrets \
+        /org/freedesktop/secrets/collection/login \
+        org.freedesktop.Secret.Collection Locked 2>/dev/null)" = "b false" ]; do
+        sleep 1
+      done
+      exec "$@"
+    '';
+  };
+
   power-menu = pkgs.writeShellApplication {
     name = "power-menu";
     runtimeInputs = [ pkgs.rofi ];
@@ -51,16 +69,6 @@ let
     '';
   };
 
-  # Hyprland >=0.56 dropped the "id" field from the `workspaces` IPC reply, which
-  # Waybar 0.15.0's hyprland/workspaces module still relies on to recognize a
-  # newly created workspace (see Alexays/Waybar#5316): the id always parses as 0,
-  # so a workspace created after Waybar starts never matches and never gets a
-  # button. This backports the relevant bit of the (as-yet unmerged) upstream fix
-  # in Alexays/Waybar#5324 - fall back to matching by name, same as Waybar's own
-  # workspace-dedup logic already does elsewhere in that file.
-  waybar-fixed = pkgs.waybar.overrideAttrs (oldAttrs: {
-    patches = (oldAttrs.patches or [ ]) ++ [ ./patches/waybar-workspace-created-name-fallback.patch ];
-  });
 in
 {
   imports = [
@@ -127,12 +135,11 @@ in
   programs.rofi = {
     enable = true;
     theme = ./rofi/theme.rasi;
-    font = "JetBrainsMono Nerd Font Mono 12";
-    terminal = "ghostty";
+    settings.font = "JetBrainsMono Nerd Font Mono 12";
+    settings.terminal = "ghostty";
   };
   programs.waybar = {
     enable = true;
-    package = waybar-fixed;
     # Run waybar as a systemd user service so it gets restarted (not left
     # running as a stale, desynced process) on every home-manager switch,
     # instead of only ever being launched once via exec-once at login.
@@ -217,9 +224,10 @@ in
 
       hl.on("hyprland.start", function()
           hl.exec_cmd("uwsm finalize SSH_AUTH_SOCK")
-          hl.exec_cmd("hyprlock && uwsm app -- signal-desktop --start-in-tray --password-store=\"gnome-libsecret\"")
-          hl.exec_cmd("uwsm app -- 1password --silent")
-          hl.exec_cmd("uwsm app -- discord --start-minimized")
+          hl.exec_cmd("hyprlock")
+          hl.exec_cmd("${lib.getExe after-keyring-unlock} uwsm app -- signal-desktop --start-in-tray --password-store=\"gnome-libsecret\"")
+          hl.exec_cmd("${lib.getExe after-keyring-unlock} uwsm app -- 1password --silent")
+          hl.exec_cmd("${lib.getExe after-keyring-unlock} uwsm app -- discord --start-minimized")
           hl.exec_cmd("wpctl status > /dev/null && wpctl inspect @DEFAULT_SOURCE@ > /dev/null")
       end)
 
@@ -307,7 +315,7 @@ in
           },
           dwindle = { force_split = 2, preserve_split = true },
           layout  = { single_window_aspect_ratio = "6 4" },
-          misc    = { focus_on_activate = true },
+          misc    = { focus_on_activate = true, allow_session_lock_restore = true },
       })
     '';
   };

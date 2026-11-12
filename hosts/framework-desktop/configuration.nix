@@ -23,6 +23,8 @@ in
     ../../modules/pipewire/pipewire.nix
     ../../modules/netbird/netbird.nix
     ../../modules/hyprland/hyprland.nix
+    ../../modules/rotatrix/rotatrix.nix
+    ../../modules/strata/strata.nix
   ];
 
   users.users = {
@@ -34,6 +36,8 @@ in
       extraGroups = [
         "wheel"
         "networkmanager"
+        "input" # rotatrix: read keyboard event devices
+        "uinput" # rotatrix: write synthetic input via /dev/uinput
       ];
     };
   };
@@ -56,6 +60,11 @@ in
   };
 
   home-manager = {
+    # Without this, a single unmanaged file in the way (' ... would be
+    # clobbered') aborts the whole activation at boot, and the desktop quietly
+    # keeps running the previous generation's user units instead.
+    backupFileExtension = "hm-bak";
+
     extraSpecialArgs = {
       inherit inputs;
     };
@@ -98,7 +107,6 @@ in
     };
 
     consoleLogLevel = 3;
-    initrd.verbose = false;
     kernelParams = [
       "quiet"
       "splash"

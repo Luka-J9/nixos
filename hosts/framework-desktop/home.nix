@@ -19,6 +19,7 @@
     ../../modules/hyprland/hyprland-home.nix
     ../../modules/obsidian/obsidian.nix
     ../../modules/zed/zed.nix
+    ../../modules/strata/strata-home.nix
   ];
 
   # This value determines the Home Manager release that your configuration is
