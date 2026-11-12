@@ -32,8 +32,11 @@ let
 
   power-menu = pkgs.writeShellApplication {
     name = "power-menu";
-    runtimeInputs = [ pkgs.rofi ];
+    runtimeInputs = [ pkgs.rofi pkgs.procps ];
     text = ''
+      # Toggle: a second click on the waybar icon closes the open menu.
+      # Matched on this theme's path so other rofi menus are left alone.
+      if pkill -f "${./rofi/power-menu.rasi}"; then exit 0; fi
       entries="󰌾\n󰤄\n󰑓\n⏻"
       chosen=$(printf '%b' "$entries" | rofi -dmenu -p "" -no-custom \
         -theme "${./rofi/power-menu.rasi}")

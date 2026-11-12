@@ -4,6 +4,12 @@ configuration {
     hover-select:    true;
     me-select-entry: "";
     me-accept-entry: "MousePrimary";
+
+    /* The inputbar is hidden but rofi still filters on typed text, which can
+       silently empty the menu. Bind every printable key to a no-op (moving
+       the cursor in the empty input) so typing does nothing. grave is left
+       out: it's already bound to kb-toggle-case-sensitivity, also harmless. */
+    kb-move-front:   "Control+a,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,0,1,2,3,4,5,6,7,8,9,space,minus,equal,comma,period,slash,semicolon,apostrophe,bracketleft,bracketright,backslash,exclam,at,numbersign,dollar,percent,asciicircum,ampersand,asterisk,parenleft,parenright,underscore,plus,colon,quotedbl,less,greater,question,braceleft,braceright,bar,asciitilde";
 }
 
 * {
