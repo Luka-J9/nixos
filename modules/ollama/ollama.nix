@@ -23,6 +23,12 @@
       };
     };
 
+    # The model loader needs network-online.target, and by default it is
+    # WantedBy=multi-user.target -- so multi-user/graphical.target (and thus
+    # uwsm/Hyprland) sat behind NetworkManager-wait-online for ~6s every boot.
+    # Hang it off ollama.service only, so it still runs but in the background.
+    systemd.services.ollama-model-loader.wantedBy = lib.mkForce [ "ollama.service" ];
+
     # nixpkgs marks posthog broken on mcp >= 2 (unstable carries 2.2.0) because
     # its test suite fails against that API. mcp is only a test input there --
     # posthog itself runs on backoff/distro/requests -- so dropping its checks

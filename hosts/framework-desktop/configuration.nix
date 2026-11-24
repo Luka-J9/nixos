@@ -79,7 +79,8 @@ in
     loader = {
       systemd-boot.enable = lib.mkForce false;
       efi.canTouchEfiVariables = true;
-      timeout = 3;
+      # Skip the menu; hold Space during boot to get it back.
+      timeout = 0;
     };
 
     lanzaboote = {
@@ -117,6 +118,10 @@ in
   };
 
   hardware.bluetooth.enable = true;
+
+  # Firmware/BIOS updates via LVFS: `fwupdmgr refresh && fwupdmgr update`
+  services.fwupd.enable = true;
+
   networking.hostName = "framework-desktop"; # Define your hostname.
   networking.networkmanager.wifi.backend = "iwd"; # TPM support somehow breaks this
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -151,13 +156,30 @@ in
   };
 
   services.getty.autologinUser = "${mainUser}";
+  # Keep tty1 blank: it sits behind Hyprland and is briefly revealed on
+  # logout/shutdown before Plymouth's shutdown splash takes over.
+  services.getty.extraArgs = [
+    "--skip-login"
+    "--noissue"
+  ];
+  # getty@ is Type=idle: it holds off exec'ing until every boot job is done or
+  # 5s pass. NetworkManager-wait-online runs in the background for longer, so
+  # autologin (and thus Hyprland) always lost the full 5s.
+  # Set on the getty@ template so it merges into NixOS's own overrides.conf
+  # (which carries the ExecStart). A getty@tty1 drop-in also named
+  # overrides.conf masks that one and getty falls back to /usr/bin/agetty.
+  systemd.services."getty@".serviceConfig.Type = "simple";
 
   # Let unpatched binaries (e.g. VS Code marketplace extensions) run without an FHS sandbox
   programs.nix-ld.enable = true;
 
+  # uwsm is chatty on stdout; send it to the journal (journalctl -t uwsm-start)
+  # instead of leaving it printed on tty1.
   programs.bash.loginShellInit = ''
     if [ "$(tty)" = "/dev/tty1" ]; then
-      exec uwsm start hyprland-uwsm.desktop
+      clear
+      setterm --cursor off
+      exec systemd-cat -t uwsm-start uwsm start hyprland-uwsm.desktop
     fi
   '';
 
