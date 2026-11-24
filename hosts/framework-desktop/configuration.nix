@@ -152,6 +152,9 @@ in
 
   services.getty.autologinUser = "${mainUser}";
 
+  # Let unpatched binaries (e.g. VS Code marketplace extensions) run without an FHS sandbox
+  programs.nix-ld.enable = true;
+
   programs.bash.loginShellInit = ''
     if [ "$(tty)" = "/dev/tty1" ]; then
       exec uwsm start hyprland-uwsm.desktop
